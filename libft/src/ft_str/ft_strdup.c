@@ -6,13 +6,13 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 11:06:49 by mcentell          #+#    #+#             */
-/*   Updated: 2024/09/16 15:45:31 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:52:08 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/libft.h"
 
-char	*ft_strdup(char *src)
+char	*ft_strdup(const char *src)
 {
 	char	*new;
 	int		i;

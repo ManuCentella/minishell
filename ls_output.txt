@@ -1,0 +1,15 @@
+total 84
+-rw-r--r-- 1 mcentell _malaga    58 Feb  6 15:48 append.txt
+-rw-r--r-- 1 mcentell _malaga     0 Feb  4 15:12 error.txt
+-rw-r--r-- 1 mcentell _malaga    11 Feb  4 15:12 file.txt
+drwxr-xr-x 2 mcentell _malaga    25 Jan 28 16:08 include
+-rw-r--r-- 1 mcentell _malaga    16 Feb  4 13:30 input.txt
+drwxr-xr-x 5 mcentell _malaga    70 Feb  6 15:48 libft
+-rw-r--r-- 1 mcentell _malaga     0 Feb  6 15:48 ls_error.txt
+-rw-r--r-- 1 mcentell _malaga     0 Feb  6 15:48 ls_output.txt
+-rw-r--r-- 1 mcentell _malaga  1011 Jan 28 16:15 Makefile
+-rwxr-xr-x 1 mcentell _malaga 51216 Feb  6 15:48 minishell
+drwxr-xr-x 2 mcentell _malaga  4096 Feb  6 15:48 obj
+-rw-r--r-- 1 mcentell _malaga    16 Feb  6 15:48 output_cat.txt
+-rw-r--r-- 1 mcentell _malaga    16 Feb  6 15:48 output.txt
+drwxr-xr-x 2 mcentell _malaga  4096 Feb  6 13:39 src

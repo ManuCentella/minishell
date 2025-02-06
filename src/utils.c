@@ -20,9 +20,11 @@ void	ft_free_split(char **split)
 char	*ft_strjoin_free(char *s1, const char *s2, int to_free)
 {
 	char	*result;
-	size_t	len1 = 0, len2;
+	size_t	len1;
+	size_t	len2;
 
-	len1 = 0, len2 = 0;
+	len1 = 0;
+	len2 = 0;
 	if (!s1 && !s2) // Si ambos son NULL, devolver NULL
 		return (NULL);
 	if (s1)
@@ -43,8 +45,8 @@ char	*ft_strjoin_free(char *s1, const char *s2, int to_free)
 	return (result);
 }
 
-void print_msg(t_data *data, const char *msg, int fd)
+void	print_msg(t_data *data, const char *msg, int fd)
 {
-    (void)data; // Si no lo usas, evita warnings
-    ft_putendl_fd((char *)msg, fd); // Casting a (char *)
+	(void)data;                     // Si no lo usas, evita warnings
+	ft_putendl_fd((char *)msg, fd); // Casting a (char *)
 }

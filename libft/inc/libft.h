@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:37:55 by mcentell          #+#    #+#             */
-/*   Updated: 2025/01/28 16:49:58 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:52:30 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char				*ft_strrchr(const char *s, int c);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
 void				*ft_calloc(size_t nitems, size_t size);
-char				*ft_strdup(char *src);
+char				*ft_strdup(const char *src);
 char				*ft_substr(const char *s, unsigned int start, size_t len);
 char				*ft_strjoin(char const *s1, char const *s2);
 char				**ft_split(char const *s, char c);
