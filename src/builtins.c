@@ -6,13 +6,12 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 12:25:32 by mcentell          #+#    #+#             */
-/*   Updated: 2025/02/05 15:41:58 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/02/13 15:46:43 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Verifica si los argumentos contienen "-n"
 static int	check_option(char **args)
 {
 	int	i;

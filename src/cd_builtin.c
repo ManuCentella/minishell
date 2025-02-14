@@ -119,16 +119,3 @@ int	cd_builtin(t_data *data, t_cmd *cmd)
 	return (exit_);
 }
 
-// ✅ `get_env_var()` ahora maneja casos donde `env` es `NULL`
-t_env	*get_env_var(t_env *env, const char *name)
-{
-	if (!env)
-		return (NULL);
-	while (env)
-	{
-		if (ft_strcmp(env->variable, name) == 0)
-			return (env);
-		env = env->next;
-	}
-	return (NULL);
-}

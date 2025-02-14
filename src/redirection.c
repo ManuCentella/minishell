@@ -82,26 +82,6 @@ static int	handle_error_redirection(t_cmd *cmd)
 	return (0);
 }
 
-static int	handle_heredoc(t_cmd *cmd)
-{
-	int	pipe_fd[2];
-
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("minishell: error creando pipe para heredoc");
-		return (-1);
-	}
-	write(pipe_fd[1], cmd->heredoc_content, ft_strlen(cmd->heredoc_content));
-	close(pipe_fd[1]); // Cerramos escritura en el pipe
-	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
-	{
-		perror("minishell: error en dup2 (heredoc)");
-		close(pipe_fd[0]);
-		return (-1);
-	}
-	close(pipe_fd[0]);
-	return (0);
-}
 
 int	handle_redirections(t_cmd *cmd)
 {
@@ -124,3 +104,21 @@ void	restore_stdio(int stdin_backup, int stdout_backup, int stderr_backup)
 	dup2(stdout_backup, STDOUT_FILENO);
 	dup2(stderr_backup, STDERR_FILENO);
 }
+
+int handle_all_heredocs(t_cmd *cmd_list)
+{
+    t_cmd *tmp = cmd_list;
+    while (tmp)
+    {
+        if (tmp->heredoc)
+        {
+            if (handle_heredoc(tmp) == -1)
+                return (-1);
+            tmp->heredoc = NULL;  // Marcar heredoc como ya procesado
+        }
+        tmp = tmp->next;
+    }
+    return (0);
+}
+
+

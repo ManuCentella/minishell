@@ -32,29 +32,33 @@ static char	*search_paths(char **paths, char *cmd)
 }
 
 // Busca la ruta binaria de 'cmd' en el PATH
-char	*find_binary_path(char *cmd, t_env *env)
+char *find_binary_path(char *cmd, t_env *env)
 {
-	char	**envp;
-	char	*path_var;
-	char	**paths;
-	char	*binary_path;
+    char **envp;
+    char *path_var;
+    char **paths;
+    char *binary_path;
 
-	envp = convert_env_to_array(env);
-	path_var = getenv("PATH");
-	if (!path_var)
-	{
-		ft_free_split(envp);
-		return (NULL);
-	}
-	paths = ft_split(path_var, ':');
-	binary_path = search_paths(paths, cmd);
-	if (!binary_path)
-	{
-		ft_free_split(paths);
-		ft_free_split(envp);
-		return (NULL);
-	}
-	ft_free_split(paths);
-	ft_free_split(envp);
-	return (binary_path);
+    // 📌 Si el comando ya contiene `/` (es una ruta), probamos directamente
+    if (ft_strchr(cmd, '/') != NULL)
+    {
+        if (access(cmd, X_OK) == 0) // 📌 Verifica si es ejecutable
+            return (ft_strdup(cmd));
+        return (NULL);
+    }
+
+    // 📌 Si no es una ruta, buscamos en $PATH
+    envp = convert_env_to_array(env);
+    path_var = getenv("PATH");
+    if (!path_var)
+    {
+        ft_free_split(envp);
+        return (NULL);
+    }
+    paths = ft_split(path_var, ':');
+    binary_path = search_paths(paths, cmd);
+    
+    ft_free_split(paths);
+    ft_free_split(envp);
+    return (binary_path);
 }

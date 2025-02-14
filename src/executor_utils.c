@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:33:04 by mcentell          #+#    #+#             */
-/*   Updated: 2025/02/06 13:33:43 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:31:00 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,14 @@ void	child_process(t_cmd *cmd, char *binary_path, char **envp)
 {
 	if (handle_redirections(cmd) == -1)
 		exit(EXIT_FAILURE);
+
 	execve(binary_path, cmd->args, envp);
+
+	// Si execve falla, imprimimos error y liberamos memoria
 	perror("execve");
-	exit(EXIT_FAILURE);
+	free(binary_path);
+	ft_free_split(envp);
+	exit(127); // Código de salida estándar para "command not found"
 }
+
 

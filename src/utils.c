@@ -50,3 +50,21 @@ void	print_msg(t_data *data, const char *msg, int fd)
 	(void)data;                     // Si no lo usas, evita warnings
 	ft_putendl_fd((char *)msg, fd); // Casting a (char *)
 }
+
+char	*ft_strndup(const char *s, size_t n)
+{
+	char	*dup;
+	size_t	i;
+
+	dup = malloc(n + 1);
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (s[i] && i < n)
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}
