@@ -129,7 +129,5 @@ t_env	*init_env(char **envp);
 
 void	print_env_vars(t_env *env);
 void	free_env_list(t_env *env);
-void print_cmd_list(t_cmd *cmd_list);
-
 
 #endif
