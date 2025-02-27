@@ -114,7 +114,10 @@ int	cd_builtin(t_data *data, t_cmd *cmd)
 	if (cmd->args[1] && cmd->args[2])
 		return (print_msg(data, "cd: too many arguments", -1), 1);
 	home = get_env_var(data->env, "HOME");
-	exit_ = cd_path(data, cmd->args[1], home ? home->value : NULL);
+	if (home)
+    	exit_ = cd_path(data, cmd->args[1], home->value);
+	else
+    	exit_ = cd_path(data, cmd->args[1], NULL);
 	update_var(data);
 	return (exit_);
 }

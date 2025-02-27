@@ -34,12 +34,12 @@ static char	*search_paths(char **paths, char *cmd)
 // Busca la ruta binaria de 'cmd' en el PATH
 char *find_binary_path(char *cmd, t_env *env)
 {
-    char **envp;
-    char *path_var;
     char **paths;
     char *binary_path;
+    char *path_var;
+    t_env *path_env;
 
-    // 📌 Si el comando ya contiene `/` (es una ruta), probamos directamente
+    // 📌 Si el comando ya contiene `/`, lo probamos directamente
     if (ft_strchr(cmd, '/') != NULL)
     {
         if (access(cmd, X_OK) == 0) // 📌 Verifica si es ejecutable
@@ -47,18 +47,32 @@ char *find_binary_path(char *cmd, t_env *env)
         return (NULL);
     }
 
-    // 📌 Si no es una ruta, buscamos en $PATH
-    envp = convert_env_to_array(env);
-    path_var = getenv("PATH");
-    if (!path_var)
+    // 📌 Obtenemos la variable PATH correctamente
+    path_env = get_env_var(env, "PATH");  // ✅ Usamos `get_env_var()`
+    path_var = (path_env) ? path_env->value : NULL;  // ✅ Extraemos `value` si PATH existe
+
+    // 📌 Debugging para verificar el valor real de PATH
+    printf("[DEBUG] PATH actual en find_binary_path: %s\n", path_var);
+
+    // 🔹 Si PATH no existe o está vacío, devolvemos NULL y mostramos error
+    if (!path_var || ft_strlen(path_var) == 0)  
     {
-        ft_free_split(envp);
+        printf("minishell: %s: command not found\n", cmd);
         return (NULL);
     }
+
+    // 📌 Separamos PATH en rutas y verificamos si es válido
     paths = ft_split(path_var, ':');
+    if (!paths || !paths[0]) // ✅ Evitar problemas si PATH está vacío
+    {
+        printf("minishell: %s: command not found\n", cmd);
+        return (NULL);
+    }
+
+    // 📌 Buscamos el comando en cada ruta
     binary_path = search_paths(paths, cmd);
-    
+
     ft_free_split(paths);
-    ft_free_split(envp);
     return (binary_path);
 }
+
