@@ -24,27 +24,40 @@ RM = rm -f
 # Regla principal
 all: $(NAME)
 
+CLR_RMV		:= \033[0m
+RED		    := \033[1;31m
+GREEN		:= \033[1;32m
+YELLOW		:= \033[1;33m
+BLUE		:= \033[1;34m
+CYAN 		:= \033[1;36m
+
 # Crear el ejecutable
 $(NAME): $(OBJ_FILES) $(LIBFT)
+	@echo "$(GREEN)Compilation ${CLR_RMV}of ${YELLOW}$(NAME) ${CLR_RMV}..."
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES) -L$(LIBFT_DIR) -lft -lreadline
+	@echo "$(GREEN)$(NAME) created[0m ✔️"
+
+# Compilar la librería libft
+$(LIBFT):
+	@echo "$(GREEN)Compilation ${CLR_RMV}of ${YELLOW}libft.a ${CLR_RMV}..."
+	@make -C $(LIBFT_DIR)
+	@echo "$(GREEN)libft.a created[0m ✔️"
 
 # Compilar archivos objeto
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I$(INC_DIR) -I$(LIBFT_DIR) -c $< -o $@
 
-# Compilar la librería libft
-$(LIBFT):
-	@make -C $(LIBFT_DIR)
-
 # Limpiar archivos objeto
 clean:
 	$(RM) $(OBJ_FILES)
+	@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)objs ✔️"
 	@make clean -C $(LIBFT_DIR)
 
 # Limpiar todo
 fclean: clean
 	$(RM) $(NAME)
+	@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)binary ✔️"
 	@make fclean -C $(LIBFT_DIR)
 
 # Recompilar todo
