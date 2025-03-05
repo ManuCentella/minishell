@@ -21,9 +21,15 @@
  
      tmp[0] = c;
      tmp[1] = '\0';
+ 
+     printf("[DEBUG] append_char ejecutado. Copiando carácter: '%c' en posición %d\n", c, *i);
+ 
      *expanded = ft_strjoin_free(*expanded, tmp, 1);
      (*i)++;
+ 
+     printf("[DEBUG] Estado actual de expanded: %s\n", *expanded);
  }
+ 
  
  /* ************************************************************************** */
  /*    get_variable_value: busca el valor de una variable en el entorno        */
@@ -60,31 +66,63 @@
  /* ************************************************************************** */
  
  void expand_dollar(char **expanded, char *arg, int *i, t_env *env, int exit_status)
- {
-     (*i)++; /* Saltamos el '$' */
- 
-     /* Caso especial: '$?' */
-     if (arg[*i] == '?')
-         expand_question_mark(expanded, i, exit_status);
-     else
-     {
-         /* Leer nombre de variable (letras, dígitos, '_') */
-         int start = *i;
-         while (arg[*i] && (ft_isalnum(arg[*i]) || arg[*i] == '_'))
-             (*i)++;
- 
-         if (*i > start) /* Expandimos solo si hay un nombre de variable */
-         {
-             char *var_name = ft_strndup(&arg[start], *i - start);
-             char *value = get_variable_value(var_name, env, exit_status);
-             free(var_name);
-             *expanded = ft_strjoin_free(*expanded, value, 3);
-         }
-         else
-         {
-             /* Si no hay variable válida después de $, tratamos $ como literal */
-             append_char(expanded, '$', i);
-         }
-     }
- }
- 
+{
+    (*i)++; // Saltamos el '$'
+
+    printf("[DEBUG] expand_dollar ejecutado. Procesando arg[%d]: %s\n", *i, &arg[*i]);
+
+    /* Caso especial: '$?' para código de salida */
+    if (arg[*i] == '?')
+    {
+        expand_question_mark(expanded, i, exit_status);
+        return;
+    }
+
+    /* Si `$` es seguido por un número, lo copiamos entero como texto */
+    if (ft_isdigit(arg[*i]))
+    {
+        printf("[DEBUG] '$' seguido de número, copiando todo como texto\n");
+        append_char(expanded, '$', i);  
+
+        while (ft_isdigit(arg[*i]))  // Copiar TODOS los dígitos después del `$`
+        {
+            printf("[DEBUG] Intentando copiar número: %c en posición %d\n", arg[*i], *i);
+            append_char(expanded, arg[*i], i);
+        }
+
+        printf("[DEBUG] Estado final de expanded después de copiar número: %s\n", *expanded);
+        return;
+    }
+
+    /* Expansión de variables */
+    int start = *i;
+    while (arg[*i] && (ft_isalnum(arg[*i]) || arg[*i] == '_'))
+        (*i)++;
+
+    if (*i > start) // Expandimos solo si hay un nombre de variable válido
+    {
+        char *var_name = ft_strndup(&arg[start], *i - start);
+        printf("[DEBUG] Variable detectada: %s\n", var_name);
+
+        char *value = get_variable_value(var_name, env, exit_status);
+        printf("[DEBUG] Valor expandido: %s\n", value);
+
+        free(var_name);
+
+        // 🔥 **Corrección: evitar doble barra "//" al concatenar**
+        if (ft_strlen(*expanded) > 0 && (*expanded)[ft_strlen(*expanded) - 1] == '/' && value[0] == '/')
+        {
+            printf("[DEBUG] Eliminando '/' extra en expansión de variable\n");
+            *expanded = ft_strjoin_free(*expanded, value + 1, 3); // Saltar el primer '/'
+        }
+        else
+            *expanded = ft_strjoin_free(*expanded, value, 3); // Concatenación normal
+    }
+    else
+    {
+        printf("[DEBUG] '$' sin variable. Agregando '$' literal.\n");
+        append_char(expanded, '$', i);
+    }
+}
+
+

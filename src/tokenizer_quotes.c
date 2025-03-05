@@ -8,25 +8,40 @@
  
  /* (1) handle_escaped_chars: \" -> ", \\ -> \, \$ -> \x02 */
  void handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
- {
-     char next = t->input[t->i + 1];
+{
+    char next = t->input[t->i + 1];
+
+    printf("[DEBUG] handle_escaped_chars ejecutado. Posición: %d, Carácter actual: %c, Carácter siguiente: %c\n",
+        t->i, t->input[t->i], next);
+
+    if (next == '\"' || next == '\\')
+    {
+        printf("[DEBUG] Copiando comilla o backslash: %c\n", next);
+        buffer[(*j)++] = next;  // Copia el carácter escapado
+        t->i += 2;  // Avanza dos posiciones (salta el \ y el carácter escapado)
+    }
+    else if (next == '$')
+    {
+        printf("[DEBUG] Encontrado '\\$', copiando '$' como carácter literal\n");
+        buffer[(*j)++] = '$';  // 🔹 Copia $ directamente
+        t->i += 2;  // Avanza dos posiciones (salta el \ y el $)
+    }
+    else
+    {
+        printf("[DEBUG] Copiando barra invertida normal: %c\n", t->input[t->i]);
+        buffer[(*j)++] = '\\';  // Copia la barra invertida
+        t->i++;  // Avanza una posición (solo salta el \)
+    }
+
+    printf("[DEBUG] Después de handle_escaped_chars, t->i está en: %d, próximo carácter: %c\n",
+        t->i, t->input[t->i]);
+}
+
+
+
+
+
  
-     if (next == '\"' || next == '\\')
-     {
-         buffer[(*j)++] = next;
-         t->i += 2;
-     }
-     else if (next == '$')
-     {
-         buffer[(*j)++] = '\x02';
-         t->i += 2;
-     }
-     else
-     {
-         buffer[(*j)++] = '\\';
-         t->i++;
-     }
- }
  
  /* (2) process_inner_single_quote: maneja ' dentro de comillas dobles */
  /*static char *process_inner_single_quote(t_tokenizer *t)
@@ -65,6 +80,10 @@
      t->i++;
      if (!buffer)
          return;
+ 
+     if (quote == '\"')
+         t->inside_double_quotes = 1;  // 🔹 Activamos modo comillas dobles
+ 
      while (t->i < t->len && t->input[t->i] != quote)
      {
          if (quote == '\"' && t->input[t->i] == '\\')
@@ -72,6 +91,7 @@
          else
              buffer[j++] = t->input[t->i++];
      }
+ 
      if (t->i >= t->len)
      {
          fprintf(stderr, "Error: comillas sin cerrar\n");
@@ -79,13 +99,20 @@
      }
      else
          t->i++;
+ 
      buffer[j] = '\0';
+ 
      if (quote == '\'')
          add_token(t, ft_strjoin("\x01", buffer), j + 1);
      else
          add_token(t, buffer, j);
+ 
+     if (quote == '\"')
+         t->inside_double_quotes = 0;  // 🔹 Desactivamos modo comillas dobles
+ 
      free(buffer);
  }
+ 
 
 void add_token(t_tokenizer *t, char *start, int length)
 {

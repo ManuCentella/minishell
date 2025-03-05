@@ -53,7 +53,10 @@ void	set_env_var(t_env **env, const char *name, const char *value)
 	if (var) // Si ya existe, modificar su valor
 	{
 		free(var->value);
-		var->value = (value) ? ft_strdup(value) : NULL;
+		if (value)
+			var->value = ft_strdup(value);
+		else
+			var->value = NULL;
 	}
 	else // Si no existe, la creamos y la añadimos a la lista
 	{
@@ -61,11 +64,15 @@ void	set_env_var(t_env **env, const char *name, const char *value)
 		if (!new_var)
 			return ;
 		new_var->variable = ft_strdup(name);
-		new_var->value = (value) ? ft_strdup(value) : NULL;
+		if (value)
+			new_var->value = ft_strdup(value);
+		else
+			new_var->value = NULL;
 		new_var->next = *env;
 		*env = new_var;
 	}
 }
+
 
 /**
  * 🔹 is_valid_var_name - Verifica si el nombre de una variable de entorno es válido.

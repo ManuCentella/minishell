@@ -117,7 +117,8 @@ void parse_token_logic(t_cmd **current, t_cmd **cmd_list, char **tokens, int *i)
             fprintf(stderr, "minishell: error de sintaxis cerca del token `|`\n");
             return;
         }
-        (*current)->next = init_cmd(); // Creamos un nuevo nodo para el siguiente comando
+        (*current)->is_piped = 1; // ✅ Marcamos que este comando es parte de una tubería
+        (*current)->next = init_cmd();
         *current = (*current)->next;
     }
     /* Si el token es una redirección (<, >, >>, <<) */
@@ -139,6 +140,7 @@ void parse_token_logic(t_cmd **current, t_cmd **cmd_list, char **tokens, int *i)
         add_arg(*current, tokens[*i]);
     }
 }
+
 
 /**
  * 🔹 expand_cmd - Expande variables en el nombre del comando.

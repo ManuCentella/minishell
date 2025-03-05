@@ -11,6 +11,8 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
+#include <signal.h>
 
 // --- Definición de estructuras ---
 typedef struct s_redir
@@ -36,7 +38,8 @@ typedef struct s_command
     char *heredoc;         // Indicador de si hay un heredoc ("<<")
     char *heredoc_content; // Contenido del heredoc
     int  heredoc_fd;       // 🔥 File descriptor del heredoc (para evitar redirecciones repetidas)
-
+    int     is_piped;
+    
     struct s_command *next; // Siguiente comando en la lista (para pipes)
 } t_cmd;
 
@@ -61,7 +64,10 @@ typedef struct s_tokenizer
     int len;
     char **tokens;
     int token_count;
+    int inside_double_quotes;  // 🔹 Ya existe
+    bool is_escaped_dollar;    // 🔹 Nuevo campo para marcar $ escapado
 } t_tokenizer;
+
 
 // --- Ejecutores principales ---
 void executor(t_cmd *cmd_list, t_data *data);
@@ -129,5 +135,8 @@ t_env	*init_env(char **envp);
 
 void	print_env_vars(t_env *env);
 void	free_env_list(t_env *env);
+
+void restore_and_close_stdio(int stdin_backup, int stdout_backup, int stderr_backup);
+void execute_commands(t_cmd *cmd_list, t_data *data);
 
 #endif
