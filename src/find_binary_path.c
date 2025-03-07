@@ -31,45 +31,52 @@ static char	*search_paths(char **paths, char *cmd)
 	return (NULL);
 }
 
+
+// Función auxiliar: obtiene la variable PATH del entorno
+static char *get_path_variable(t_env *env)
+{
+    t_env *path_env = get_env_var(env, "PATH");
+    return (path_env ? path_env->value : NULL);
+}
+
+// Función auxiliar: maneja el caso en el que el comando contiene '/'
+static char *handle_absolute_or_relative_path(char *cmd)
+{
+    if (ft_strchr(cmd, '/') != NULL)
+        return (access(cmd, X_OK) == 0 ? ft_strdup(cmd) : NULL);
+    return (NULL);
+}
+
+// Función auxiliar: maneja el caso en el que la variable PATH no existe o está vacía
+static char **handle_empty_path(char *cmd, char *path_var)
+{
+    if (!path_var || ft_strlen(path_var) == 0)
+    {
+        printf("minishell: %s: command not found\n", cmd);
+        return (NULL);
+    }
+    return (ft_split(path_var, ':'));
+}
+
 // Busca la ruta binaria de 'cmd' en el PATH
 char *find_binary_path(char *cmd, t_env *env)
 {
     char **paths;
     char *binary_path;
     char *path_var;
-    t_env *path_env;
 
-    // 📌 Si el comando ya contiene `/`, lo probamos directamente
-    if (ft_strchr(cmd, '/') != NULL)
-    {
-        if (access(cmd, X_OK) == 0) // 📌 Verifica si es ejecutable
-            return (ft_strdup(cmd));
+    // Manejo de rutas absolutas o relativas
+    if ((binary_path = handle_absolute_or_relative_path(cmd)) != NULL)
+        return (binary_path);
+
+    // Obtiene la variable PATH
+    path_var = get_path_variable(env);
+
+    // Maneja el caso en el que PATH no existe o está vacío
+    if (!(paths = handle_empty_path(cmd, path_var)))
         return (NULL);
-    }
 
-    // 📌 Obtenemos la variable PATH correctamente
-    path_env = get_env_var(env, "PATH");  // ✅ Usamos `get_env_var()`
-    path_var = (path_env) ? path_env->value : NULL;  // ✅ Extraemos `value` si PATH existe
-
-    // 📌 Debugging para verificar el valor real de PATH
-    printf("[DEBUG] PATH actual en find_binary_path: %s\n", path_var);
-
-    // 🔹 Si PATH no existe o está vacío, devolvemos NULL y mostramos error
-    if (!path_var || ft_strlen(path_var) == 0)  
-    {
-        printf("minishell: %s: command not found\n", cmd);
-        return (NULL);
-    }
-
-    // 📌 Separamos PATH en rutas y verificamos si es válido
-    paths = ft_split(path_var, ':');
-    if (!paths || !paths[0]) // ✅ Evitar problemas si PATH está vacío
-    {
-        printf("minishell: %s: command not found\n", cmd);
-        return (NULL);
-    }
-
-    // 📌 Buscamos el comando en cada ruta
+    // Busca el comando en cada ruta
     binary_path = search_paths(paths, cmd);
 
     ft_free_split(paths);

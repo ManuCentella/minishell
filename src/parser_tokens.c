@@ -39,35 +39,30 @@ static void	add_arg(t_cmd *cmd, char *token)
 	int		i;
 	char	**new_args;
 
-	// Contamos cuántos argumentos tiene actualmente
 	i = 0;
-	while (cmd->args && cmd->args[i])
+	while (cmd->args && cmd->args[i]) // ✅ Recorremos la lista de argumentos existentes
 		i++;
-	
-	// Reservamos memoria para un nuevo array de argumentos (+2: nuevo arg + NULL)
 	new_args = malloc(sizeof(char *) * (i + 2));
 	if (!new_args)
 	{
-		perror("malloc"); // Si malloc falla, imprimimos error
-		return ;
+		perror("malloc"); // ✅ Si malloc falla, imprimimos error
+		return;
 	}
-	
-	// Copiamos los argumentos antiguos al nuevo array
+
 	i = 0;
 	while (cmd->args && cmd->args[i])
 	{
-		new_args[i] = cmd->args[i];
+		new_args[i] = cmd->args[i]; // ✅ Copiamos argumentos existentes
 		i++;
 	}
-	
-	// Agregamos el nuevo argumento
-	new_args[i] = strdup(token); // Copiamos el token
-	new_args[i + 1] = NULL; // Terminamos la lista con NULL
-	
-	// Liberamos el array antiguo y asignamos el nuevo
-	free(cmd->args);
+
+	new_args[i] = strdup(token); // ✅ Agregamos el nuevo argumento
+	new_args[i + 1] = NULL; // ✅ Terminamos la lista con NULL
+
+	free(cmd->args); // ✅ Liberamos la lista anterior
 	cmd->args = new_args;
 }
+
 
 /**
  * 🔹 handle_redirection - Identifica redirecciones (<, >, >>, <<) en un comando.
@@ -85,61 +80,77 @@ static void	handle_redirection(t_cmd *cmd, char **tokens, int *i)
 		cmd->heredoc = strdup(tokens[++(*i)]);
 }
 
+
 /**
- * 🔹 parse_token_logic - Procesa un token y lo clasifica como comando, argumento o redirección.
- * 🔹 Si es un `|` crea un nuevo nodo para el siguiente comando.
- * 🔹 Si es `<`, `>`, `>>` o `<<`, se maneja como redirección.
- * 🔹 Si es un comando o argumento, lo añade a `cmd->args`.
+ * 🔹 handle_pipe_or_separator - Maneja la lógica de tuberías (|) y punto y coma (;)
  */
+static void handle_pipe_or_separator(t_cmd **current, char **tokens, int i)
+{
+    if (!(*current)->cmd || strlen((*current)->cmd) == 0)
+    {
+        fprintf(stderr, "minishell: error de sintaxis cerca del token `%s`\n", tokens[i]);
+        return;
+    }
+    if (strcmp(tokens[i], "|") == 0)
+        (*current)->is_piped = 1; // ✅ Marcamos que este comando es parte de una tubería
+
+    (*current)->next = init_cmd();
+    *current = (*current)->next;
+}
+
+/**
+ * 🔹 handle_redirection_tokens - Maneja redirecciones (<, >, >>, <<).
+ */
+static void handle_redirection_tokens(t_cmd *current, char **tokens, int *i)
+{
+    if (!current->cmd || strlen(current->cmd) == 0)
+    {
+        fprintf(stderr, "minishell: error de sintaxis cerca del token `%s`\n", tokens[*i]);
+        return;
+    }
+    handle_redirection(current, tokens, i);
+}
+
+/**
+ * 🔹 add_command_or_argument - Agrega un comando o argumento a la estructura t_cmd.
+ */
+static void add_command_or_argument(t_cmd *current, char *token)
+{
+    if (!current->cmd)
+        current->cmd = strdup(token);
+    add_arg(current, token);
+}
+
 /**
  * 🔹 parse_token_logic - Procesa un token y lo organiza en la lista de comandos.
- * Si el token es un pipe ("|"), se crea un nuevo nodo para el siguiente comando,
- * verificando que el comando anterior no esté vacío.
  */
 void parse_token_logic(t_cmd **current, t_cmd **cmd_list, char **tokens, int *i)
 {
     /* Ignorar tokens vacíos */
     if (!tokens[*i] || tokens[*i][0] == '\0')
         return;
-    
+
     /* Si no hay un comando actual, lo creamos */
     if (!*current)
     {
         *current = init_cmd();
         *cmd_list = *current;
     }
+
+    /* Si el token es un PIPE (`|`) o punto y coma (`;`), manejamos la separación */
+    if (strcmp(tokens[*i], "|") == 0 || strcmp(tokens[*i], ";") == 0)
+        handle_pipe_or_separator(current, tokens, *i);
     
-    /* Si encontramos un PIPE, verificamos que el comando previo tenga contenido */
-    if (strcmp(tokens[*i], "|") == 0)
-    {
-        if (!(*current)->cmd || strlen((*current)->cmd) == 0)
-        {
-            fprintf(stderr, "minishell: error de sintaxis cerca del token `|`\n");
-            return;
-        }
-        (*current)->is_piped = 1; // ✅ Marcamos que este comando es parte de una tubería
-        (*current)->next = init_cmd();
-        *current = (*current)->next;
-    }
-    /* Si el token es una redirección (<, >, >>, <<) */
+    /* Si el token es una redirección (<, >, >>, <<), lo manejamos */
     else if (strcmp(tokens[*i], "<") == 0 || strcmp(tokens[*i], ">") == 0 ||
              strcmp(tokens[*i], ">>") == 0 || strcmp(tokens[*i], "<<") == 0)
-    {
-        if (!(*current)->cmd || strlen((*current)->cmd) == 0)
-        {
-            fprintf(stderr, "minishell: error de sintaxis cerca del token `%s`\n", tokens[*i]);
-            return;
-        }
-        handle_redirection(*current, tokens, i);
-    }
-    /* En caso de comando o argumento normal */
+        handle_redirection_tokens(*current, tokens, i);
+    
+    /* Si es un comando o argumento normal, lo añadimos */
     else
-    {
-        if (!(*current)->cmd)
-            (*current)->cmd = strdup(tokens[*i]);
-        add_arg(*current, tokens[*i]);
-    }
+        add_command_or_argument(*current, tokens[*i]);
 }
+
 
 
 /**
@@ -206,7 +217,6 @@ t_cmd *parse_tokens(char **tokens, t_env *env, int exit_status)
     if (!tokens)
         return (NULL);
 
-    /* Filtramos el primer token si es "minishell" */
     if (tokens[0] && strcmp(tokens[0], "minishell") == 0)
     {
         int j = 0;
@@ -216,7 +226,6 @@ t_cmd *parse_tokens(char **tokens, t_env *env, int exit_status)
             j++;
         }
     }
-
     cmd_list = NULL;
     current = NULL;
     i = 0;

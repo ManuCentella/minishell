@@ -138,5 +138,12 @@ void	free_env_list(t_env *env);
 
 void restore_and_close_stdio(int stdin_backup, int stdout_backup, int stderr_backup);
 void execute_commands(t_cmd *cmd_list, t_data *data);
+int skip_quotes(char *input, int pos);
+
+void wait_for_child(pid_t pid, t_data *data);
+char *get_binary_path(t_cmd *cmd, t_data *data);
+void backup_stdio(int *stdin_backup, int *stdout_backup, int *stderr_backup);
+char *extract_var_name(char *arg, int *i);
+
 
 #endif

@@ -13,52 +13,37 @@
  /* Prototipos de funciones auxiliares */
  void append_char(char **expanded, char c, int *i);
  void expand_dollar(char **expanded, char *arg, int *i, t_env *env, int exit_status);
- 
- 
- /* ************************************************************************** */
- /*     expand_variable: función principal de expansión, ahora más pequeña     */
- /* ************************************************************************** */
- 
- #include <stdio.h> // Para imprimir mensajes de depuración
 
  char *expand_variable(char *arg, t_env *env, int exit_status)
 {
     char *expanded = ft_strdup("");
     int i = 0;
 
-    printf("[DEBUG] expand_variable ejecutado con arg: %s\n", arg);
-
-    // 🔹 Si el token contiene \x01, NO expandimos variables
+    // 🔹 No expandimos variables dentro de comillas simples
     if (ft_strchr(arg, '\x01'))
     {
-        printf("[DEBUG] Texto dentro de comillas simples, no expandimos: %s\n", arg);
-        return ft_strdup(arg); // 🔥 Devolvemos el texto sin modificar
+        return ft_strdup(arg);
     }
 
     while (arg[i])
     {
-        printf("[DEBUG] Iterando en expand_variable: arg[%d] = %c\n", i, arg[i]);
 
-        if (arg[i] == '\x02')  // "$" literal (proviene de "\$")
+        if (arg[i] == '\\' && arg[i + 1] == '$')  // 🔹 Si hay `\$`, lo tratamos como texto
         {
-            printf("[DEBUG] Encontrado \\x02, agregando '$'\n");
-            append_char(&expanded, '$', &i);
+            append_char(&expanded, '$', &i);  // Copia `$` literal
+            i++;  // Salta `$`
         }
-        else if (arg[i] == '$') // Expansión de variables
+        else if (arg[i] == '$') // 🔥 Expansión normal de variables
         {
-            printf("[DEBUG] Encontrado '$' en arg[%d], llamando a expand_dollar()\n", i);
             expand_dollar(&expanded, arg, &i, env, exit_status);
         }
         else
         {
-            printf("[DEBUG] Copiando carácter normal: '%c' desde arg[%d]\n", arg[i], i);
             append_char(&expanded, arg[i], &i);
         }
 
-        printf("[DEBUG] Estado actual de expanded: %s\n", expanded);
     }
 
-    printf("[DEBUG] Resultado final expandido: %s\n", expanded);
     return expanded;
 }
 
