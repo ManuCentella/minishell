@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <signal.h>
+#include <termios.h>
 
 // --- Definición de estructuras ---
 typedef struct s_redir

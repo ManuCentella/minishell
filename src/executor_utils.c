@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:33:04 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/06 11:13:39 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 12:30:01 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

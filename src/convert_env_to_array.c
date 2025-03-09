@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   convert_env_to_array.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:40:38 by mcentell          #+#    #+#             */
-/*   Updated: 2025/02/18 17:45:42 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 12:30:14 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
