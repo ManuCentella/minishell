@@ -22,12 +22,10 @@
      tmp[0] = c;
      tmp[1] = '\0';
  
-     printf("[DEBUG] append_char ejecutado. Copiando carácter: '%c' en posición %d\n", c, *i);
  
      *expanded = ft_strjoin_free(*expanded, tmp, 1);
      (*i)++;
  
-     printf("[DEBUG] Estado actual de expanded: %s\n", *expanded);
  }
  
  
@@ -38,17 +36,17 @@
  char *get_variable_value(const char *var_name, t_env *env, int exit_status)
  {
      t_env *env_var;
-     char  *value;
  
      if (ft_strcmp(var_name, "?") == 0)
          return ft_itoa(exit_status); 
+     
      env_var = get_env_var(env, var_name);
-     if (env_var)
-         value = ft_strdup(env_var->value);
-     else
-         value = ft_strdup(""); 
-     return value;
+     if (env_var && env_var->value)
+         return ft_strdup(env_var->value);
+ 
+     return NULL;  // ✅ Devuelve NULL si la variable no existe
  }
+ 
  
  /* ************************************************************************** */
  /*      expand_question_mark: Maneja el caso especial $?                      */
@@ -65,64 +63,52 @@
  /*  expand_dollar: Maneja expansión de variables normales y $?                */
  /* ************************************************************************** */
  
- void expand_dollar(char **expanded, char *arg, int *i, t_env *env, int exit_status)
+ void handle_special_dollar(char **expanded, char *arg, int *i, int exit_status)
 {
-    (*i)++; // Saltamos el '$'
-
-    printf("[DEBUG] expand_dollar ejecutado. Procesando arg[%d]: %s\n", *i, &arg[*i]);
-
-    /* Caso especial: '$?' para código de salida */
     if (arg[*i] == '?')
     {
         expand_question_mark(expanded, i, exit_status);
         return;
     }
-
-    /* Si `$` es seguido por un número, lo copiamos entero como texto */
     if (ft_isdigit(arg[*i]))
     {
-        printf("[DEBUG] '$' seguido de número, copiando todo como texto\n");
-        append_char(expanded, '$', i);  
-
-        while (ft_isdigit(arg[*i]))  // Copiar TODOS los dígitos después del `$`
-        {
-            printf("[DEBUG] Intentando copiar número: %c en posición %d\n", arg[*i], *i);
-            append_char(expanded, arg[*i], i);
-        }
-
-        printf("[DEBUG] Estado final de expanded después de copiar número: %s\n", *expanded);
-        return;
-    }
-
-    /* Expansión de variables */
-    int start = *i;
-    while (arg[*i] && (ft_isalnum(arg[*i]) || arg[*i] == '_'))
-        (*i)++;
-
-    if (*i > start) // Expandimos solo si hay un nombre de variable válido
-    {
-        char *var_name = ft_strndup(&arg[start], *i - start);
-        printf("[DEBUG] Variable detectada: %s\n", var_name);
-
-        char *value = get_variable_value(var_name, env, exit_status);
-        printf("[DEBUG] Valor expandido: %s\n", value);
-
-        free(var_name);
-
-        // 🔥 **Corrección: evitar doble barra "//" al concatenar**
-        if (ft_strlen(*expanded) > 0 && (*expanded)[ft_strlen(*expanded) - 1] == '/' && value[0] == '/')
-        {
-            printf("[DEBUG] Eliminando '/' extra en expansión de variable\n");
-            *expanded = ft_strjoin_free(*expanded, value + 1, 3); // Saltar el primer '/'
-        }
-        else
-            *expanded = ft_strjoin_free(*expanded, value, 3); // Concatenación normal
-    }
-    else
-    {
-        printf("[DEBUG] '$' sin variable. Agregando '$' literal.\n");
         append_char(expanded, '$', i);
+        while (ft_isdigit(arg[*i]))
+            append_char(expanded, arg[*i], i);
     }
 }
 
+char *extract_var_name(char *arg, int *i)
+{
+    int start = *i;
+    while (arg[*i] && (ft_isalnum(arg[*i]) || arg[*i] == '_'))
+        (*i)++;
+    return (*i > start) ? ft_strndup(&arg[start], *i - start) : NULL;
+}
 
+void append_expanded_value(char **expanded, char *value)
+{
+    char *temp = (*expanded && (*expanded)[ft_strlen(*expanded) - 1] == '/' && value[0] == '/') ?
+                 ft_strjoin_free(*expanded, value + 1, 1) :
+                 ft_strjoin_free(*expanded, value, 1);
+    *expanded = temp;
+}
+
+void expand_dollar(char **expanded, char *arg, int *i, t_env *env, int exit_status)
+{
+    (*i)++; // Saltamos '$'
+    handle_special_dollar(expanded, arg, i, exit_status);
+    if (arg[*i] == '?' || ft_isdigit(arg[*i]))
+        return;
+
+    char *var_name = extract_var_name(arg, i);
+    if (!var_name)
+        return append_char(expanded, '$', i);
+
+    char *value = get_variable_value(var_name, env, exit_status);
+    free(var_name);
+    if (!value) value = ft_strdup("");
+
+    append_expanded_value(expanded, value);
+    free(value);
+}

@@ -1,16 +1,5 @@
 #include "minishell.h"
 
-// Detecta builtins críticos que NO pueden ejecutarse en pipes
-int is_critical_builtin(t_cmd *cmd)
-{
-    if (!cmd || !cmd->cmd)
-        return (0);
-    return (ft_strcmp(cmd->cmd, "cd") == 0 ||
-            ft_strcmp(cmd->cmd, "export") == 0 ||
-            ft_strcmp(cmd->cmd, "unset") == 0 ||
-            ft_strcmp(cmd->cmd, "exit") == 0);
-}
-
 // 🔹 Crea un pipe si es necesario
 static int create_pipe_if_needed(t_cmd *cmd_list, int pipe_fd[2])
 {
@@ -43,8 +32,8 @@ static void setup_child_process(t_cmd *cmd_list, int prev_fd, int pipe_fd[2])
         exit(EXIT_FAILURE);
 }
 
-// 🔹 Crea y ejecuta un proceso hijo
-static pid_t create_and_execute_child(t_cmd *cmd, int prev_fd, int pipe_fd[2], t_data *data)
+// 🔹 Crea y ejecuta un proceso hijo, almacenando el último PID
+static pid_t create_and_execute_child(t_cmd *cmd, int prev_fd, int pipe_fd[2], t_data *data, pid_t *last_pid)
 {
     pid_t pid = fork();
     if (pid < 0)
@@ -52,12 +41,13 @@ static pid_t create_and_execute_child(t_cmd *cmd, int prev_fd, int pipe_fd[2], t
         perror("fork");
         return (-1);
     }
-    else if (pid == 0)
+    else if (pid == 0) // Proceso hijo
     {
         setup_child_process(cmd, prev_fd, pipe_fd);
         execute_command(cmd, data);
         exit(data->exit_status);
     }
+    *last_pid = pid; // Almacenar el último PID
     return (pid);
 }
 
@@ -78,13 +68,7 @@ void execute_piped_commands(t_cmd *cmd_list, t_data *data)
 {
     int pipe_fd[2], prev_fd = -1;
     t_cmd *current_cmd = cmd_list;
-
-    // 🔥 Ejecutar el primer comando en la shell principal si es un builtin crítico
-    if (current_cmd && is_critical_builtin(current_cmd))
-    {
-        execute_builtin(current_cmd, data);
-        current_cmd = current_cmd->next; // Continuar con la tubería
-    }
+    pid_t last_pid = -1;
 
     // 🔥 Procesar el resto de la tubería con procesos hijos
     while (current_cmd)
@@ -92,7 +76,7 @@ void execute_piped_commands(t_cmd *cmd_list, t_data *data)
         if (create_pipe_if_needed(current_cmd, pipe_fd) == -1)
             return;
 
-        create_and_execute_child(current_cmd, prev_fd, pipe_fd, data);
+        create_and_execute_child(current_cmd, prev_fd, pipe_fd, data, &last_pid);
         clean_parent_fds(&prev_fd, pipe_fd, current_cmd);
         current_cmd = current_cmd->next;
     }
@@ -100,10 +84,11 @@ void execute_piped_commands(t_cmd *cmd_list, t_data *data)
     if (prev_fd != -1)
         close(prev_fd);
 
-    // Esperar a todos los procesos hijos
+    // 🔥 Esperar solo al último proceso hijo
     int status;
-    while (waitpid(-1, &status, 0) > 0)
+    if (last_pid != -1)
     {
+        waitpid(last_pid, &status, 0);
         if (WIFEXITED(status))
             data->exit_status = WEXITSTATUS(status);
     }

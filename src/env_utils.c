@@ -44,34 +44,30 @@ t_env	*get_env_var(t_env *env, const char *name)
 /**
  * 🔹 set_env_var - Agrega o modifica una variable de entorno en `env`.
  */
-void	set_env_var(t_env **env, const char *name, const char *value)
+void set_env_var(t_env **env, const char *name, const char *value)
 {
-	t_env	*var;
-	t_env	*new_var;
+    t_env *var = get_env_var(*env, name);
+    t_env *new_var;
 
-	var = get_env_var(*env, name);
-	if (var) // Si ya existe, modificar su valor
-	{
-		free(var->value);
-		if (value)
-			var->value = ft_strdup(value);
-		else
-			var->value = NULL;
-	}
-	else // Si no existe, la creamos y la añadimos a la lista
-	{
-		new_var = malloc(sizeof(t_env));
-		if (!new_var)
-			return ;
-		new_var->variable = ft_strdup(name);
-		if (value)
-			new_var->value = ft_strdup(value);
-		else
-			new_var->value = NULL;
-		new_var->next = *env;
-		*env = new_var;
-	}
+
+    if (var) // Si ya existe, modificar su valor
+    {
+        free(var->value);
+        var->value = ft_strdup(value ? value : "");
+    }
+    else // Si no existe, la creamos y la añadimos a la lista
+    {
+        new_var = malloc(sizeof(t_env));
+        if (!new_var)
+            return;
+
+        new_var->variable = ft_strdup(name);
+        new_var->value = ft_strdup(value ? value : "");
+        new_var->next = *env;
+        *env = new_var;
+    }
 }
+
 
 
 /**
@@ -112,7 +108,7 @@ void	print_env_vars(t_env *env)
 		env = env->next;
 	}
 }
-#include "minishell.h"
+
 
 /**
  * 🔹 free_env_list - Libera toda la lista de variables de entorno.

@@ -10,7 +10,7 @@ int	ft_isspace(char c)
 
 int	ft_is_metachar(char c)
 {
-	return (c == '|' || c == '<' || c == '>');
+	return (c == '|' || c == '<' || c == '>' || c == ';'); 
 }
 
 void	skip_whitespace(t_tokenizer *t)

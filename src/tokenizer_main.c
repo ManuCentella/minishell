@@ -24,16 +24,13 @@
  /* (4) process_next_token: decide si es comilla, metachar o texto normal */
  void process_next_token(t_tokenizer *t)
 {
-    printf("[DEBUG] process_next_token ejecutado. Posición: %d, Carácter actual: %c\n", t->i, t->input[t->i]);
 
     if (t->input[t->i] == '\"' || t->input[t->i] == '\'')
     {
-        printf("[DEBUG] Detectadas comillas: %c\n", t->input[t->i]);
         handle_quotes(t, t->input[t->i]);
     }
     else if (ft_is_metachar(t->input[t->i]))
     {
-        printf("[DEBUG] Detectado metacarácter: %c\n", t->input[t->i]);
         handle_metacharacters(t);
     }
     else
@@ -48,7 +45,6 @@
         {
             if (t->input[t->i] == '\\')  // 🔹 Detectar barra invertida y manejarla correctamente
             {
-                printf("[DEBUG] Encontrada barra invertida en posición %d\n", t->i);
                 handle_escaped_chars(t, buffer, &j);
             }
             else
@@ -57,8 +53,6 @@
             }
         }
         buffer[j] = '\0';
-
-        printf("[DEBUG] Agregando token procesado: %s\n", buffer);
         add_token(t, buffer, j);
     }
 }

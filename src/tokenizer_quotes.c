@@ -5,37 +5,30 @@
  ******************************************************************************/
 
  #include "minishell.h"
- 
+
  /* (1) handle_escaped_chars: \" -> ", \\ -> \, \$ -> \x02 */
  void handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
-{
-    char next = t->input[t->i + 1];
-
-    printf("[DEBUG] handle_escaped_chars ejecutado. Posición: %d, Carácter actual: %c, Carácter siguiente: %c\n",
-        t->i, t->input[t->i], next);
-
-    if (next == '\"' || next == '\\')
-    {
-        printf("[DEBUG] Copiando comilla o backslash: %c\n", next);
-        buffer[(*j)++] = next;  // Copia el carácter escapado
-        t->i += 2;  // Avanza dos posiciones (salta el \ y el carácter escapado)
-    }
-    else if (next == '$')
-    {
-        printf("[DEBUG] Encontrado '\\$', copiando '$' como carácter literal\n");
-        buffer[(*j)++] = '$';  // 🔹 Copia $ directamente
-        t->i += 2;  // Avanza dos posiciones (salta el \ y el $)
-    }
-    else
-    {
-        printf("[DEBUG] Copiando barra invertida normal: %c\n", t->input[t->i]);
-        buffer[(*j)++] = '\\';  // Copia la barra invertida
-        t->i++;  // Avanza una posición (solo salta el \)
-    }
-
-    printf("[DEBUG] Después de handle_escaped_chars, t->i está en: %d, próximo carácter: %c\n",
-        t->i, t->input[t->i]);
-}
+ {
+     char next = t->input[t->i + 1];
+ 
+     if (next == '\"' || next == '\\')  // 🔹 Comillas dobles o barra invertida escapada
+     {
+         buffer[(*j)++] = next;
+         t->i += 2;  // Salta el `\` y el carácter escapado
+     }
+     else if (next == '$') // 🔹 Si es `\$`, guardamos `\` y `$` como texto
+     {
+         buffer[(*j)++] = '\\';  // Copia la barra invertida
+         buffer[(*j)++] = '$';   // Copia el `$` normal, sin expansión
+         t->i += 2;  // Salta el `\` y el `$`
+     }
+     else
+     {
+         buffer[(*j)++] = '\\';  // Copia la barra invertida
+         t->i++;  // Avanza una posición
+     }
+ }
+ 
 
 
 
