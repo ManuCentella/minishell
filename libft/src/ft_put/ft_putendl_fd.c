@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 14:26:23 by mcentell          #+#    #+#             */
-/*   Updated: 2025/01/30 15:11:54 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:12:30 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,4 +19,3 @@ void	ft_putendl_fd(char *s, int fd)
 	write(fd, s, ft_strlen(s));
 	write(fd, &nl, 1);
 }
-

@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pointers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 16:19:20 by mcentell          #+#    #+#             */
-/*   Updated: 2024/09/16 16:19:24 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:12:51 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../../inc/ft_printf.h"
 

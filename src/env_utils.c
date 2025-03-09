@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:27:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:30:10 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 20:59:17 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ t_env	*init_env(char **envp)
 	t_env	*env_list;
 	int		i;
 	char	*equal_sign;
+	char	*name;
+	char	*value;
 
 	env_list = NULL;
 	i = 0;
@@ -28,9 +30,9 @@ t_env	*init_env(char **envp)
 		equal_sign = ft_strchr(envp[i], '=');
 		if (equal_sign)
 		{
-			char *name = ft_strndup(envp[i], equal_sign - envp[i]);
-			char *value = ft_strdup(equal_sign + 1);
-            set_env_var(&env_list, name, value);
+			name = ft_strndup(envp[i], equal_sign - envp[i]);
+			value = ft_strdup(equal_sign + 1);
+			set_env_var(&env_list, name, value);
 			free(name);
 			free(value);
 		}
@@ -56,34 +58,34 @@ t_env	*get_env_var(t_env *env, const char *name)
 /**
  * 🔹 set_env_var - Agrega o modifica una variable de entorno en `env`.
  */
-void set_env_var(t_env **env, const char *name, const char *value)
+// Si ya existe, modificar su valor
+// Si no existe, la creamos y la añadimos a la lista
+void	set_env_var(t_env **env, const char *name, const char *value)
 {
-    t_env *var = get_env_var(*env, name);
-    t_env *new_var;
+	t_env	*var;
+	t_env	*new_var;
 
-
-    if (var) // Si ya existe, modificar su valor
-    {
-        free(var->value);
-        var->value = ft_strdup(value ? value : "");
-    }
-    else // Si no existe, la creamos y la añadimos a la lista
-    {
-        new_var = malloc(sizeof(t_env));
-        if (!new_var)
-            return;
-
-        new_var->variable = ft_strdup(name);
-        new_var->value = ft_strdup(value ? value : "");
-        new_var->next = *env;
-        *env = new_var;
-    }
+	var = get_env_var(*env, name);
+	if (var)
+	{
+		free(var->value);
+		var->value = ft_strdup(value ? value : "");
+	}
+	else
+	{
+		new_var = malloc(sizeof(t_env));
+		if (!new_var)
+			return ;
+		new_var->variable = ft_strdup(name);
+		new_var->value = ft_strdup(value ? value : "");
+		new_var->next = *env;
+		*env = new_var;
+	}
 }
 
-
-
 /**
- * 🔹 is_valid_var_name - Verifica si el nombre de una variable de entorno es válido.
+ * 🔹 is_valid_var_name - Verifica si el nombre de una variable
+ * de entorno es válido.
  */
 int	is_valid_var_name(const char *name)
 {
@@ -120,7 +122,6 @@ void	print_env_vars(t_env *env)
 		env = env->next;
 	}
 }
-
 
 /**
  * 🔹 free_env_list - Libera toda la lista de variables de entorno.

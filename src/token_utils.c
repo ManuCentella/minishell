@@ -6,13 +6,13 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:33 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:29:18 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 19:59:53 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_isspace(char c) 
+int	ft_isspace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n'
 		|| c == '\v' || c == '\f' || c == '\r');
@@ -20,7 +20,7 @@ int	ft_isspace(char c)
 
 int	ft_is_metachar(char c)
 {
-	return (c == '|' || c == '<' || c == '>' || c == ';'); 
+	return (c == '|' || c == '<' || c == '>' || c == ';');
 }
 
 void	skip_whitespace(t_tokenizer *t)
@@ -41,7 +41,7 @@ char	**allocate_new_tokens(t_tokenizer *t)
 
 void	copy_existing_tokens(char **new_tokens, char **old_tokens, int count)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < count)

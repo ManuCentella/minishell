@@ -6,27 +6,31 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:08:21 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:29:33 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 20:22:57 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void disable_echoctl(void)
+// Obtener configuración actual del terminal
+// 🔹 Deshabilitar impresión de caracteres de control (como ^C)
+// Aplicar configuración inmediatamente
+void	disable_echoctl(void)
 {
-	struct termios term;
+	struct termios	term;
 
-	tcgetattr(STDIN_FILENO, &term); // Obtener configuración actual del terminal
-	term.c_lflag &= ~ECHOCTL;       // 🔹 Deshabilitar impresión de caracteres de control (como ^C)
-	tcsetattr(STDIN_FILENO, TCSANOW, &term); // Aplicar configuración inmediatamente
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
 /**
  * 🛠️ free_cmd_list - Libera la memoria de la lista de comandos.
  */
-void free_cmd_list(t_cmd *cmd)
+void	free_cmd_list(t_cmd *cmd)
 {
-	t_cmd *tmp;
+	t_cmd	*tmp;
+	int		i;
 
 	while (cmd)
 	{
@@ -34,8 +38,12 @@ void free_cmd_list(t_cmd *cmd)
 		free(cmd->cmd);
 		if (cmd->args)
 		{
-			for (int i = 0; cmd->args[i]; i++)
+			i = 0;
+			while (cmd->args[i])
+			{
 				free(cmd->args[i]);
+				i++;
+			}
 			free(cmd->args);
 		}
 		free(cmd->infile);
@@ -52,33 +60,38 @@ void free_cmd_list(t_cmd *cmd)
 /**
  * 🛠️ signal_handler - Maneja `Ctrl+C` y `Ctrl+\`
  */
-void signal_handler(int sig)
+// Ctrl+C
+// Nueva línea para evitar caracteres extra
+// Resetea readline()
+// Borra la línea actual
+// Redibuja el prompt sin imprimir ^C
+void	signal_handler(int sig)
 {
-	if (sig == SIGINT) // Ctrl+C
+	if (sig == SIGINT)
 	{
-		printf("\n");          // Nueva línea para evitar caracteres extra
-		rl_on_new_line();       // Resetea readline()
-		rl_replace_line("", 0); // Borra la línea actual
-		rl_redisplay();         // Redibuja el prompt sin imprimir ^C
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+// ✅ Configurar señales
+// ✅ Desactivar impresión de `^C`
+int	main(int argc, char **argv, char **envp)
 {
-	char    *input;
-	char    **tokens;
-	t_cmd   *cmd_list;
-	t_data  data;
+	char	*input;
+	char	**tokens;
+	t_cmd	*cmd_list;
+	t_data	data;
 
 	(void)argc;
 	(void)argv;
 	data.env = init_env(envp);
 	data.cwd = getcwd(NULL, 0);
 	data.exit_status = 0;
-	// ✅ Configurar señales
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	// ✅ Desactivar impresión de `^C`
 	disable_echoctl();
 	while (1)
 	{
@@ -86,7 +99,7 @@ int main(int argc, char **argv, char **envp)
 		if (!input)
 		{
 			printf("exit\n");
-			break;
+			break ;
 		}
 		if (*input)
 		{

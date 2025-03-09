@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:40:38 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/09 12:30:14 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 20:59:36 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // Función auxiliar para contar cuántas variables de entorno hay.
 static int	count_env_nodes(t_env *env)
 {
-	int count;
+	int	count;
 
 	count = 0;
 	while (env)

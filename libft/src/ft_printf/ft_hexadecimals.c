@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   ft_hexadecimals.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 16:19:36 by mcentell          #+#    #+#             */
-/*   Updated: 2024/09/16 16:19:38 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:12:58 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../../inc/ft_printf.h"
 

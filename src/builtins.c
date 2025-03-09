@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/05 12:25:32 by mcentell          #+#    #+#             */
-/*   Updated: 2025/02/13 15:46:43 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:01:29 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	pwd_builtin(t_data *data)
 	return (0);
 }
 
+// ✅ Solo muestra variables con valor
 void	env_builtin(t_data *data)
 {
 	t_env	*env;
@@ -76,7 +77,7 @@ void	env_builtin(t_data *data)
 	env = data->env;
 	while (env)
 	{
-		if (env->value) // ✅ Solo muestra variables con valor
+		if (env->value)
 		{
 			ft_putstr_fd(env->variable, STDOUT_FILENO);
 			ft_putstr_fd("=", STDOUT_FILENO);

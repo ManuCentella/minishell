@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:27:37 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:30:19 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:11:41 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ static void	update_var(t_data *data)
 }
 
 // ✅ `cd_home()` no cambia de directorio si `HOME` no está definido
+// Evita la advertencia de parámetro no usado
 static int	cd_home(t_data *data, char *home)
 {
-	(void)data; // Evita la advertencia de parámetro no usado
+	(void)data;
 	if (home)
 	{
 		if (chdir(home) == -1)
@@ -127,10 +128,9 @@ int	cd_builtin(t_data *data, t_cmd *cmd)
 		return (print_msg(data, "cd: too many arguments", -1), 1);
 	home = get_env_var(data->env, "HOME");
 	if (home)
-    	exit_ = cd_path(data, cmd->args[1], home->value);
+		exit_ = cd_path(data, cmd->args[1], home->value);
 	else
-    	exit_ = cd_path(data, cmd->args[1], NULL);
+		exit_ = cd_path(data, cmd->args[1], NULL);
 	update_var(data);
 	return (exit_);
 }
-

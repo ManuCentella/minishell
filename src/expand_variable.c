@@ -6,9 +6,11 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:34 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:29:54 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 20:50:52 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "minishell.h"
 
 /******************************************************************************
  * expansion_main.c
@@ -20,43 +22,31 @@
  *  - Expande $? con el código de salida.
  ******************************************************************************/
 
- #include "minishell.h"
-
- /* Prototipos de funciones auxiliares */
- void append_char(char **expanded, char c, int *i);
- void expand_dollar(char **expanded, char *arg, int *i, t_env *env, int exit_status);
-
- char *expand_variable(char *arg, t_env *env, int exit_status)
+// 🔹 No expandimos variables dentro de comillas simples
+// 🔹 Si hay `\$`, lo tratamos como texto
+// Copia `$` literal
+// Salta `$`
+// 🔥 Expansión normal de variables
+char	*expand_variable(char *arg, t_env *env, int exit_status)
 {
-    char *expanded = ft_strdup("");
-    int i = 0;
+	char	*expanded;
+	int		i;
 
-    // 🔹 No expandimos variables dentro de comillas simples
-    if (ft_strchr(arg, '\x01'))
-    {
-        return ft_strdup(arg);
-    }
-
-    while (arg[i])
-    {
-
-        if (arg[i] == '\\' && arg[i + 1] == '$')  // 🔹 Si hay `\$`, lo tratamos como texto
-        {
-            append_char(&expanded, '$', &i);  // Copia `$` literal
-            i++;  // Salta `$`
-        }
-        else if (arg[i] == '$') // 🔥 Expansión normal de variables
-        {
-            expand_dollar(&expanded, arg, &i, env, exit_status);
-        }
-        else
-        {
-            append_char(&expanded, arg[i], &i);
-        }
-
-    }
-
-    return expanded;
+	i = 0;
+	expanded = ft_strdup("");
+	if (ft_strchr(arg, '\x01'))
+		return (ft_strdup(arg));
+	while (arg[i])
+	{
+		if (arg[i] == '\\' && arg[i + 1] == '$')
+		{
+			append_char(&expanded, '$', &i);
+			i++;
+		}
+		else if (arg[i] == '$')
+			expand_dollar(&expanded, arg, &i, env, exit_status);
+		else
+			append_char(&expanded, arg[i], &i);
+	}
+	return (expanded);
 }
-
- 
