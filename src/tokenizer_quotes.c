@@ -6,16 +6,17 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 12:15:11 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:03:08 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/09 21:46:51 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "minishell.h"
 
 /******************************************************************************
  * tokenizer_quotes.c
  * - Maneja comillas simples y dobles
  * - handle_escaped_chars para \ dentro de comillas dobles
  ******************************************************************************/
-#include "minishell.h"
 
 /* (1) handle_escaped_chars: \" -> ", \\ -> \, \$ -> \x02 */
 // 🔹 Comillas dobles o barra invertida escapada
@@ -52,6 +53,7 @@ void	handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
 /* (3) handle_quotes: maneja comillas simples y dobles */
 // 🔹 Activamos modo comillas dobles
 // 🔹 Desactivamos modo comillas dobles
+
 void	handle_quotes(t_tokenizer *t, char quote)
 {
 	int		j;
