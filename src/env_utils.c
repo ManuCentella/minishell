@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:27:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 20:59:17 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:32:50 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,27 +60,46 @@ t_env	*get_env_var(t_env *env, const char *name)
  */
 // Si ya existe, modificar su valor
 // Si no existe, la creamos y la añadimos a la lista
+void	update_existing_var(t_env *var, const char *value)
+{
+	char	*new_value;
+
+	if (value)
+		new_value = ft_strdup(value);
+	else
+		new_value = ft_strdup("");
+	if (!new_value)
+		return ;
+	free(var->value);
+	var->value = new_value;
+}
+
 void	set_env_var(t_env **env, const char *name, const char *value)
 {
 	t_env	*var;
 	t_env	*new_var;
+	char	*new_value;
 
 	var = get_env_var(*env, name);
 	if (var)
 	{
-		free(var->value);
-		var->value = ft_strdup(value ? value : "");
+		update_existing_var(var, value);
+		return ;
 	}
+	if (value)
+		new_value = ft_strdup(value);
 	else
+		new_value = ft_strdup("");
+	new_var = malloc(sizeof(t_env));
+	if (!new_var || !new_value)
 	{
-		new_var = malloc(sizeof(t_env));
-		if (!new_var)
-			return ;
-		new_var->variable = ft_strdup(name);
-		new_var->value = ft_strdup(value ? value : "");
-		new_var->next = *env;
-		*env = new_var;
+		free(new_value);
+		return ;
 	}
+	new_var->variable = ft_strdup(name);
+	new_var->value = new_value;
+	new_var->next = *env;
+	*env = new_var;
 }
 
 /**

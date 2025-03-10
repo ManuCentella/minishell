@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 12:15:11 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:46:51 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 20:20:53 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,24 @@ void	handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
 /* (3) handle_quotes: maneja comillas simples y dobles */
 // 🔹 Activamos modo comillas dobles
 // 🔹 Desactivamos modo comillas dobles
+void	process_quote_content(t_tokenizer *t, char quote, char *buffer, int *j)
+{
+	while (t->i < t->len && t->input[t->i] != quote)
+	{
+		if (quote == '\"' && t->input[t->i] == '\\')
+			handle_escaped_chars(t, buffer, j);
+		else
+			buffer[(*j)++] = t->input[t->i++];
+	}
+	if (t->i >= t->len)
+	{
+		fprintf(stderr, "Error: comillas sin cerrar\n");
+		free(buffer);
+		buffer = NULL;
+	}
+	else
+		t->i++;
+}
 
 void	handle_quotes(t_tokenizer *t, char quote)
 {
@@ -68,20 +86,9 @@ void	handle_quotes(t_tokenizer *t, char quote)
 		return ;
 	if (quote == '\"')
 		t->inside_double_quotes = 1;
-	while (t->i < t->len && t->input[t->i] != quote)
-	{
-		if (quote == '\"' && t->input[t->i] == '\\')
-			handle_escaped_chars(t, buffer, &j);
-		else
-			buffer[j++] = t->input[t->i++];
-	}
-	if (t->i >= t->len)
-	{
-		fprintf(stderr, "Error: comillas sin cerrar\n");
-		free(buffer);
-	}
-	else
-		t->i++;
+	process_quote_content(t, quote, buffer, &j);
+	if (!buffer)
+		return ;
 	buffer[j] = '\0';
 	if (quote == '\'')
 		add_token(t, ft_strjoin("\x01", buffer), j + 1);

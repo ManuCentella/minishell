@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:34 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 20:50:52 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:48:07 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,12 @@
 // 🔥 Expansión normal de variables
 char	*expand_variable(char *arg, t_env *env, int exit_status)
 {
-	char	*expanded;
-	int		i;
+	char				*expanded;
+	int					i;
+	t_expansion_context	context;
 
+	context.env = env;
+	context.exit_status = exit_status;
 	i = 0;
 	expanded = ft_strdup("");
 	if (ft_strchr(arg, '\x01'))
@@ -44,7 +47,7 @@ char	*expand_variable(char *arg, t_env *env, int exit_status)
 			i++;
 		}
 		else if (arg[i] == '$')
-			expand_dollar(&expanded, arg, &i, env, exit_status);
+			expand_dollar(&expanded, arg, &i, &context);
 		else
 			append_char(&expanded, arg[i], &i);
 	}

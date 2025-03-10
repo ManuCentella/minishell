@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:54 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:06:37 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 20:23:02 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,6 @@ static void	expand_cmd_list(t_cmd *cmd_list, t_env *env, int exit_status)
 t_cmd	*parse_tokens(char **tokens, t_env *env, int exit_status)
 {
 	int		i;
-	int		j;
 	t_cmd	*cmd_list;
 	t_cmd	*current;
 
@@ -237,11 +236,11 @@ t_cmd	*parse_tokens(char **tokens, t_env *env, int exit_status)
 		return (NULL);
 	if (tokens[0] && strcmp(tokens[0], "minishell") == 0)
 	{
-		j = 0;
-		while (tokens[j])
+		i = 0;
+		while (tokens[i])
 		{
-			tokens[j] = tokens[j + 1];
-			j++;
+			tokens[i] = tokens[i + 1];
+			i++;
 		}
 	}
 	cmd_list = NULL;

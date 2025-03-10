@@ -6,16 +6,17 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:27:37 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:11:41 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:25:06 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Marca el parámetro como usado para evitar la advertencia
+// Implementación de upd_env
 void	upd_env(t_data *data)
 {
-	(void)data; // Marca el parámetro como usado para evitar la advertencia
-				// Implementación de upd_env
+	(void)data;
 }
 
 // ✅ Corrige `update_var()` para actualizar correctamente `PWD` y `OLDPWD`

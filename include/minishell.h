@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:32:26 by szaghdad          #+#    #+#             */
-/*   Updated: 2025/03/09 21:25:03 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:50:32 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,27 @@ typedef struct s_tokenizer
 	bool	is_escaped_dollar;
 }	t_tokenizer;
 
+typedef struct s_pipe_data
+{
+	int		prev_fd;
+	int		pipe_fd[2];
+	pid_t	last_pid;
+	t_data	*data;
+}	t_pipe_data;
+
+typedef struct s_export_context
+{
+	t_data	*data;
+	t_cmd	*cmd;
+	int		index;
+}	t_export_content;
+
+typedef struct s_expansion_context
+{
+	t_env	*env;
+	int		exit_status;
+}	t_expansion_context;
+
 // --- Ejecutores principales ---
 void	executor(t_cmd *cmd_list, t_data *data);
 void	execute_piped_commands(t_cmd *cmd_list, t_data *data);
@@ -179,6 +200,6 @@ char	*extract_var_name(char *arg, int *i);
 
 void	append_char(char **expanded, char c, int *i);
 void	expand_dollar(char **expanded, char *arg, int *i,
-			t_env *env, int exit_status);
+			t_expansion_context *context);
 
 #endif

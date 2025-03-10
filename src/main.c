@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:08:21 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 20:22:57 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 20:36:00 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,31 +27,37 @@ void	disable_echoctl(void)
 /**
  * 🛠️ free_cmd_list - Libera la memoria de la lista de comandos.
  */
+void	free_cmd_args(t_cmd *cmd)
+{
+	int	i;
+
+	if (cmd->args)
+	{
+		i = 0;
+		while (cmd->args[i])
+		{
+			free(cmd->args[i]);
+			i++;
+		}
+		free(cmd->args);
+	}
+	free(cmd->infile);
+	free(cmd->outfile);
+	free(cmd->appendfile);
+	free(cmd->errfile);
+	free(cmd->heredoc);
+	free(cmd->heredoc_content);
+}
+
 void	free_cmd_list(t_cmd *cmd)
 {
 	t_cmd	*tmp;
-	int		i;
 
 	while (cmd)
 	{
 		tmp = cmd->next;
 		free(cmd->cmd);
-		if (cmd->args)
-		{
-			i = 0;
-			while (cmd->args[i])
-			{
-				free(cmd->args[i]);
-				i++;
-			}
-			free(cmd->args);
-		}
-		free(cmd->infile);
-		free(cmd->outfile);
-		free(cmd->appendfile);
-		free(cmd->errfile);
-		free(cmd->heredoc);
-		free(cmd->heredoc_content);
+		free_cmd_args(cmd);
 		free(cmd);
 		cmd = tmp;
 	}
@@ -78,21 +84,12 @@ void	signal_handler(int sig)
 
 // ✅ Configurar señales
 // ✅ Desactivar impresión de `^C`
-int	main(int argc, char **argv, char **envp)
+void	process_input(t_data *data)
 {
 	char	*input;
 	char	**tokens;
 	t_cmd	*cmd_list;
-	t_data	data;
 
-	(void)argc;
-	(void)argv;
-	data.env = init_env(envp);
-	data.cwd = getcwd(NULL, 0);
-	data.exit_status = 0;
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);
-	disable_echoctl();
 	while (1)
 	{
 		input = readline("minishell> ");
@@ -105,12 +102,27 @@ int	main(int argc, char **argv, char **envp)
 		{
 			add_history(input);
 			tokens = tokenize_input(input);
-			cmd_list = parse_tokens(tokens, data.env, data.exit_status);
-			executor(cmd_list, &data);
+			cmd_list = parse_tokens(tokens, data->env, data->exit_status);
+			executor(cmd_list, data);
 			free_cmd_list(cmd_list);
 		}
 		free(input);
 	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_data	data;
+
+	(void)argc;
+	(void)argv;
+	data.env = init_env(envp);
+	data.cwd = getcwd(NULL, 0);
+	data.exit_status = 0;
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
+	disable_echoctl();
+	process_input(&data);
 	free(data.cwd);
 	free_env_list(data.env);
 	return (0);

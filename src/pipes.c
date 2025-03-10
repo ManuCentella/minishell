@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:47 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 20:08:53 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:22:48 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ static void	setup_child_process(t_cmd *cmd_list, int prev_fd, int pipe_fd[2])
 // 🔹 Crea y ejecuta un proceso hijo, almacenando el último PID
 // Proceso hijo
 // Almacenar el último PID
-static pid_t	create_and_execute_child(t_cmd *cmd, int prev_fd,
-		int pipe_fd[2], t_data *data, pid_t *last_pid)
+static pid_t	create_and_execute_child(t_cmd *cmd, t_pipe_data *pipe_data)
 {
 	pid_t	pid;
 
@@ -60,11 +59,11 @@ static pid_t	create_and_execute_child(t_cmd *cmd, int prev_fd,
 	}
 	else if (pid == 0)
 	{
-		setup_child_process(cmd, prev_fd, pipe_fd);
-		execute_command(cmd, data);
-		exit(data->exit_status);
+		setup_child_process(cmd, pipe_data->prev_fd, pipe_data->pipe_fd);
+		execute_command(cmd, pipe_data->data);
+		exit(pipe_data->data->exit_status);
 	}
-	*last_pid = pid;
+	pipe_data->last_pid = pid;
 	return (pid);
 }
 
@@ -83,32 +82,34 @@ static void	clean_parent_fds(int *prev_fd, int pipe_fd[2], t_cmd *cmd)
 // 🔥 Función principal optimizada
 // 🔥 Procesar el resto de la tubería con procesos hijos
 // 🔥 Esperar solo al último proceso hijo
+void	process_command(t_cmd *cmd, t_pipe_data *pipe_data)
+{
+	if (create_pipe_if_needed(cmd, pipe_data->pipe_fd) == -1)
+		return ;
+	create_and_execute_child(cmd, pipe_data);
+	clean_parent_fds(&pipe_data->prev_fd, pipe_data->pipe_fd, cmd);
+}
+
 void	execute_piped_commands(t_cmd *cmd_list, t_data *data)
 {
-	int		pipe_fd[2];
-	int		prev_fd;
-	t_cmd	*current_cmd;
-	pid_t	last_pid;
-	int		status;
+	t_pipe_data		pipe_data;
+	t_cmd			*current_cmd;
+	int				status;
 
-	pipe_fd[2] = -1;
-	prev_fd = -1;
+	pipe_data.pipe_fd[2] = -1;
+	pipe_data.prev_fd = -1;
+	pipe_data.last_pid = -1;
 	current_cmd = cmd_list;
-	last_pid = -1;
 	while (current_cmd)
 	{
-		if (create_pipe_if_needed(current_cmd, pipe_fd) == -1)
-			return ;
-		create_and_execute_child(current_cmd, prev_fd,
-			pipe_fd, data, &last_pid);
-		clean_parent_fds(&prev_fd, pipe_fd, current_cmd);
+		process_command(current_cmd, &pipe_data);
 		current_cmd = current_cmd->next;
 	}
-	if (prev_fd != -1)
-		close(prev_fd);
-	if (last_pid != -1)
+	if (pipe_data.prev_fd != -1)
+		close(pipe_data.prev_fd);
+	if (pipe_data.last_pid != -1)
 	{
-		waitpid(last_pid, &status, 0);
+		waitpid(pipe_data.last_pid, &status, 0);
 		if (WIFEXITED(status))
 			data->exit_status = WEXITSTATUS(status);
 	}

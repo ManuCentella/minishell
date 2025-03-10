@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:18 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:09:02 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:24:18 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,22 @@ static char	*get_path_variable(t_env *env)
 	t_env	*path_env;
 
 	path_env = get_env_var(env, "PATH");
-	return (path_env ? path_env->value : NULL);
+	if (path_env)
+		return (path_env->value);
+	else
+		return (NULL);
 }
 
 // Función auxiliar: maneja el caso en el que el comando contiene '/'
 static char	*handle_absolute_or_relative_path(char *cmd)
 {
 	if (ft_strchr(cmd, '/') != NULL)
-		return (access(cmd, X_OK) == 0 ? ft_strdup(cmd) : NULL);
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		else
+			return (NULL);
+	}
 	return (NULL);
 }
 

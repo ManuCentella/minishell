@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:10:33 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 21:49:32 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,39 +84,46 @@ void	handle_special_dollar(char **expanded, char *arg,
 
 char	*extract_var_name(char *arg, int *i)
 {
-	int	start;
+	int		start;
+	char	*var_name;
 
 	start = *i;
 	while (arg[*i] && (ft_isalnum(arg[*i]) || arg[*i] == '_'))
 		(*i)++;
-	return (*i > start) ? ft_strndup(&arg[start], *i - start) : NULL;
+	if (*i > start)
+		var_name = ft_strndup(&arg[start], *i - start);
+	else
+		var_name = NULL;
+	return (var_name);
 }
 
 void	append_expanded_value(char **expanded, char *value)
 {
 	char	*temp;
 
-	temp = (*expanded && (*expanded)[ft_strlen(*expanded) - 1] == '/'
-			&& value[0] == '/') ? ft_strjoin_free(*expanded, value + 1, 1)
-		: ft_strjoin_free(*expanded, value, 1);
+	if (*expanded && (*expanded)[ft_strlen(*expanded) - 1] == '/'
+		&& value[0] == '/')
+		temp = ft_strjoin_free(*expanded, value + 1, 1);
+	else
+		temp = ft_strjoin_free(*expanded, value, 1);
 	*expanded = temp;
 }
 
 // Saltamos '$'
 void	expand_dollar(char **expanded, char *arg, int *i,
-		t_env *env, int exit_status)
+		t_expansion_context *context)
 {
 	char	*var_name;
 	char	*value;
 
 	(*i)++;
-	handle_special_dollar(expanded, arg, i, exit_status);
+	handle_special_dollar(expanded, arg, i, context->exit_status);
 	if (arg[*i] == '?' || ft_isdigit(arg[*i]))
 		return ;
 	var_name = extract_var_name(arg, i);
 	if (!var_name)
 		return (append_char(expanded, '$', i));
-	value = get_variable_value(var_name, env, exit_status);
+	value = get_variable_value(var_name, context->env, context->exit_status);
 	free(var_name);
 	if (!value)
 		value = ft_strdup("");
