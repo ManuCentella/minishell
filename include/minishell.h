@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:32:26 by szaghdad          #+#    #+#             */
-/*   Updated: 2025/03/10 21:50:32 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 22:40:49 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,5 +201,16 @@ char	*extract_var_name(char *arg, int *i);
 void	append_char(char **expanded, char c, int *i);
 void	expand_dollar(char **expanded, char *arg, int *i,
 			t_expansion_context *context);
+
+void	process_command(t_cmd *cmd, t_pipe_data *pipe_data);
+
+void	disable_echoctl(void);
+void	signal_handler(int sig);
+void	process_input(t_data *data);
+
+void	append_char(char **expanded, char c, int *i);
+char	*get_variable_value(const char *var_name, t_env *env, int exit_status);
+t_env	*init_env(char **envp);
+t_env	*get_env_var(t_env *env, const char *name);
 
 #endif

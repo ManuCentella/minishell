@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 21:49:32 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 22:37:00 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,6 @@
  *  - expand_dollar: Maneja la expansión de variables del entorno.
  *  - expand_question_mark: Maneja la expansión de $?.
  ******************************************************************************/
-
-/* ************************************************************************** */
-/*        append_char: agrega un solo carácter a la cadena destino            */
-/* ************************************************************************** */
-void	append_char(char **expanded, char c, int *i)
-{
-	char	tmp[2];
-
-	tmp[0] = c;
-	tmp[1] = '\0';
-	*expanded = ft_strjoin_free(*expanded, tmp, 1);
-	(*i)++;
-}
-
-/* ************************************************************************** */
-/*    get_variable_value: busca el valor de una variable en el entorno        */
-/* ************************************************************************** */
-// ✅ Devuelve NULL si la variable no existe
-char	*get_variable_value(const char *var_name, t_env *env, int exit_status)
-{
-	t_env	*env_var;
-
-	if (ft_strcmp(var_name, "?") == 0)
-		return (ft_itoa(exit_status));
-	env_var = get_env_var(env, var_name);
-	if (env_var && env_var->value)
-		return (ft_strdup(env_var->value));
-	return (NULL);
-}
 
 /* ************************************************************************** */
 /*      expand_question_mark: Maneja el caso especial $?                      */

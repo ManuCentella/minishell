@@ -6,7 +6,7 @@
 /*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:39 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 20:01:48 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/10 22:26:25 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,31 +105,5 @@ int	handle_redirections(t_cmd *cmd)
 		return (-1);
 	if (cmd->heredoc && handle_heredoc(cmd) == -1)
 		return (-1);
-	return (0);
-}
-
-void	restore_stdio(int stdin_backup, int stdout_backup, int stderr_backup)
-{
-	dup2(stdin_backup, STDIN_FILENO);
-	dup2(stdout_backup, STDOUT_FILENO);
-	dup2(stderr_backup, STDERR_FILENO);
-}
-
-// Marcar heredoc como ya procesado
-int	handle_all_heredocs(t_cmd *cmd_list)
-{
-	t_cmd	*tmp;
-
-	tmp = cmd_list;
-	while (tmp)
-	{
-		if (tmp->heredoc)
-		{
-			if (handle_heredoc(tmp) == -1)
-				return (-1);
-			tmp->heredoc = NULL;
-		}
-		tmp = tmp->next;
-	}
 	return (0);
 }
