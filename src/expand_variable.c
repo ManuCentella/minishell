@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_variable.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:34 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 21:48:07 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/11 11:34:52 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

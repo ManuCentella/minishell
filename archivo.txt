@@ -1,0 +1,4 @@
+ECHO ARG: [holita]
+holita
+ECHO ARG: [test]
+test

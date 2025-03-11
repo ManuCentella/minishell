@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 12:15:11 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 20:20:53 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/11 12:28:31 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
