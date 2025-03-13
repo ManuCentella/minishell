@@ -10,18 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
 
-// Obtener configuración actual del terminal
-// 🔹 Deshabilitar impresión de caracteres de control (como ^C)
-// Aplicar configuración inmediatamente
+#include "minishell.h"
+extern int g_exit_status;
+
 void	disable_echoctl(void)
 {
-	struct termios	term;
-
-	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	// Esta función ya no es necesaria
 }
 
 /**
@@ -71,14 +66,20 @@ void	free_cmd_list(t_cmd *cmd)
 // Resetea readline()
 // Borra la línea actual
 // Redibuja el prompt sin imprimir ^C
+
 void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		printf("\n");
-		rl_on_new_line();
+		write(STDOUT_FILENO, "\nminishell> ", 12);
 		rl_replace_line("", 0);
 		rl_redisplay();
+		g_exit_status = 130;
+	}
+	else if (sig == SIGQUIT)
+	{
+		printf("Quit (core dumped)\n");
+		g_exit_status = 131;  // SIGQUIT = 128 + 3
 	}
 }
 
@@ -109,3 +110,4 @@ void	process_input(t_data *data)
 		free(input);
 	}
 }
+

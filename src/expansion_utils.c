@@ -6,37 +6,31 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/11 12:25:18 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/13 13:45:49 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-/******************************************************************************
- * expansion_utils.c
- * 
- * Funciones auxiliares para la expansión de variables:
- *  - append_char: Agrega un solo carácter a una string.
- *  - get_variable_value: Obtiene el valor de una variable de entorno.
- *  - expand_dollar: Maneja la expansión de variables del entorno.
- *  - expand_question_mark: Maneja la expansión de $?.
- ******************************************************************************/
+extern int g_exit_status;
 
-/* ************************************************************************** */
-/*      expand_question_mark: Maneja el caso especial $?                      */
-/* ************************************************************************** */
 void expand_question_mark(char **expanded, int *i, int exit_status)
 {
+    (void)exit_status;  // ✅ Evita el warning de "unused parameter"
+
     char    *value;
 
-    value = get_variable_value("?", NULL, exit_status);
+    printf("DEBUG: Expandiendo $? con g_exit_status = %d\n", g_exit_status);  // 🚀 Depuración
+
+    value = get_variable_value("?", NULL, g_exit_status); // ✅ Aseguramos que usa la variable global
     if (!value)
         return;
 
-    *expanded = ft_strjoin_free(*expanded, value, 1);  // 🔥 Cambiado a 1 para no liberar `value`
-    free(value);  // 🔥 Liberamos manualmente el valor
-
+    *expanded = ft_strjoin_free(*expanded, value, 1);
+    free(value);
     (*i)++;
 }
+
+
 
 
 /* ************************************************************************** */

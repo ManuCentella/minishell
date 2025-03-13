@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:33:04 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/09 20:54:06 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/13 13:36:03 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,32 @@ void	command_not_found(char *cmd)
 }
 
 // Proceso hijo ejecuta el comando
+
+
 void	child_process(t_cmd *cmd, char *binary_path, char **envp)
 {
+	// ✅ Restauramos SIGQUIT en los hijos para que `Ctrl+\` los mate
+	signal(SIGQUIT, SIG_DFL);
+
 	if (handle_redirections(cmd) == -1)
 		exit(EXIT_FAILURE);
+
 	execve(binary_path, cmd->args, envp);
+
+	// Si `execve()` falla, capturamos el error específico
 	perror("execve");
-	free(binary_path);
-	ft_free_split(envp);
-	exit(127);
+
+	if (errno == ENOENT)
+		exit(127);  // Comando no encontrado
+	if (errno == EACCES)
+		exit(126);  // Permiso denegado
+	if (errno == EISDIR)
+		exit(126);  // Intento de ejecutar un directorio (como Bash)
+
+	// Si no es un error específico, salimos con error genérico
+	exit(1);
 }
+
 
 // Manejo de entrada/salida
 void	backup_stdio(int *stdin_backup, int *stdout_backup, int *stderr_backup)

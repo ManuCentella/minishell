@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute_external.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:17:18 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 21:11:20 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/13 15:31:23 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int	g_exit_status;
 
 char	*get_binary_path(t_cmd *cmd, t_data *data)
 {
@@ -20,7 +22,7 @@ char	*get_binary_path(t_cmd *cmd, t_data *data)
 	if (!binary_path)
 	{
 		command_not_found(cmd->cmd);
-		data->exit_status = 127;
+		g_exit_status = 127; // ✅ Ahora $? se actualizará correctamente
 	}
 	return (binary_path);
 }
@@ -29,12 +31,19 @@ char	*get_binary_path(t_cmd *cmd, t_data *data)
 void	wait_for_child(pid_t pid, t_data *data)
 {
 	int	status;
+	int	signal_num;
 
+	(void)data;
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
-		data->exit_status = WEXITSTATUS(status);
-	else
-		data->exit_status = 1;
+	{
+		g_exit_status = WEXITSTATUS(status);
+	}
+	else if (WIFSIGNALED(status))
+	{
+		signal_num = WTERMSIG(status);
+		g_exit_status = 128 + signal_num;
+	}
 }
 
 void	execute_external(t_cmd *cmd, t_data *data)
