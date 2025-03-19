@@ -19,7 +19,6 @@ void	restore_stdio(int stdin_backup, int stdout_backup, int stderr_backup)
 	dup2(stderr_backup, STDERR_FILENO);
 }
 
-// Marcar heredoc como ya procesado
 int	handle_all_heredocs(t_cmd *cmd_list)
 {
 	t_cmd	*tmp;

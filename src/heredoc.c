@@ -6,13 +6,12 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:12 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/12 13:15:42 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:56:20 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// 🔹 Crea un pipe para heredoc y devuelve su file descriptor
 static int	open_heredoc_pipe(int pipe_fd[2])
 {
 	if (pipe(pipe_fd) == -1)
@@ -23,9 +22,6 @@ static int	open_heredoc_pipe(int pipe_fd[2])
 	return (0);
 }
 
-// 🔹 Lee la entrada del usuario y la escribe en el pipe
-// 🔥 Si el delimitador es encontrado, terminamos
-// Cerramos el extremo de escritura del pipe
 static void	read_heredoc_input(int pipe_fd[2], char *delimiter)
 {
 	char	*line;
@@ -45,8 +41,6 @@ static void	read_heredoc_input(int pipe_fd[2], char *delimiter)
 	close(pipe_fd[1]);
 }
 
-// 🔹 Redirige STDIN al pipe de heredoc
-// Ya no necesitamos el file descriptor
 static int	redirect_heredoc_to_stdin(int pipe_fd[2])
 {
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
@@ -59,7 +53,6 @@ static int	redirect_heredoc_to_stdin(int pipe_fd[2])
 	return (0);
 }
 
-// 🔥 Función principal que maneja heredoc
 int	handle_heredoc(t_cmd *cmd)
 {
 	int	pipe_fd[2];

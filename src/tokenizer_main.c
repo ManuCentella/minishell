@@ -3,22 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_main.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:28 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 20:20:45 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/19 11:26:43 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/******************************************************************************
- * tokenizer_main.c
- * - Separa la entrada en tokens
- * - Maneja metacaracteres (|, <, >)
- * - Delega las comillas a tokenizer_quotes.c
- ******************************************************************************/
 #include "minishell.h"
 
-/* (3) handle_metacharacters: detecta <, >, <<, >>, | y tokeniza */
 void	handle_metacharacters(t_tokenizer *t)
 {
 	int	start;
@@ -30,17 +23,13 @@ void	handle_metacharacters(t_tokenizer *t)
 	add_token(t, &t->input[start], t->i - start);
 }
 
-/* (4) process_next_token: decide si es comilla, metachar o texto normal */
-// Buffer para procesar caracteres escapados
-// 🔹 Detectar barra invertida y manejarla correctamente
 void	extract_token(t_tokenizer *t, char *buffer)
 {
 	int	j;
 
 	j = 0;
 	while (t->i < t->len && !ft_isspace(t->input[t->i])
-		&& !ft_is_metachar(t->input[t->i])
-		&& t->input[t->i] != '\"'
+		&& !ft_is_metachar(t->input[t->i]) && t->input[t->i] != '\"'
 		&& t->input[t->i] != '\'')
 	{
 		if (t->input[t->i] == '\\')
@@ -64,7 +53,6 @@ void	process_next_token(t_tokenizer *t)
 		extract_token(t, buffer);
 }
 
-/* (5) tokenize_input: bucle principal */
 char	**tokenize_input(char *input)
 {
 	t_tokenizer	t;
@@ -74,6 +62,7 @@ char	**tokenize_input(char *input)
 	t.len = (int)strlen(input);
 	t.tokens = NULL;
 	t.token_count = 0;
+	t.inside_double_quotes = 0;
 	while (t.i < t.len)
 	{
 		skip_whitespace(&t);
@@ -82,4 +71,21 @@ char	**tokenize_input(char *input)
 		process_next_token(&t);
 	}
 	return (t.tokens);
+}
+
+void	free_tokens(char **tokens)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i])
+	{
+		free(tokens[i]);
+		tokens[i] = NULL;
+		i++;
+	}
+	free(tokens);
+	tokens = NULL;
 }

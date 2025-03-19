@@ -6,19 +6,11 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 13:31:08 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/12 12:41:56 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:48:49 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	execute_commands(t_cmd *cmd_list, t_data *data)
-{
-	if (cmd_list && cmd_list->next)
-		execute_piped_commands(cmd_list, data);
-	else if (cmd_list)
-		execute_command(cmd_list, data);
-}
 
 void	execute_command(t_cmd *cmd, t_data *data)
 {
@@ -37,6 +29,14 @@ void	execute_command(t_cmd *cmd, t_data *data)
 		execute_builtin(cmd, data);
 	else
 		execute_external(cmd, data);
+}
+
+void	execute_commands(t_cmd *cmd_list, t_data *data)
+{
+	if (cmd_list && cmd_list->next)
+		execute_piped_commands(cmd_list, data);
+	else if (cmd_list)
+		execute_command(cmd_list, data);
 }
 
 void	executor(t_cmd *cmd_list, t_data *data)

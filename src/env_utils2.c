@@ -2,9 +2,12 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   env_utils2.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
 /*   Created: 2025/03/10 22:40:09 by szaghdad          #+#    #+#             */
 /*   Updated: 2025/03/10 22:40:09 by szaghdad         ###   ########.fr       */
 /*                                                                            */
@@ -12,9 +15,6 @@
 
 #include "minishell.h"
 
-/**
- * 🔹 init_env - Inicializa la lista de variables de entorno a partir de `envp`.
- */
 t_env	*init_env(char **envp)
 {
 	t_env	*env_list;
@@ -41,9 +41,6 @@ t_env	*init_env(char **envp)
 	return (env_list);
 }
 
-/**
- * 🔹 get_env_var - Busca y retorna una variable de entorno desde la lista.
- */
 t_env	*get_env_var(t_env *env, const char *name)
 {
 	while (env)

@@ -38,7 +38,6 @@ int	remove_env_variable(t_data *data, char *var)
 	return (1);
 }
 
-// ✅ Implementa `unset`
 int	unset_builtin(t_data *data, t_cmd *cmd)
 {
 	int		i;

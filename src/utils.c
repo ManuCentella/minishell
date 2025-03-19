@@ -6,15 +6,12 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:25:07 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/11 11:35:08 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:26:18 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Libera un array de strings generado por `ft_split()`
-// Evita segfault si split es NULL
-// Liberar cada string individual
 void	ft_free_split(char **split)
 {
 	int	i;
@@ -30,10 +27,6 @@ void	ft_free_split(char **split)
 	free(split);
 }
 
-// Une dos strings y libera opcionalmente uno o ambos
-// Si ambos son NULL, devolver NULL
-// No liberamos `s2` porque es `const char *`
-// Si necesitas liberar `s2`, debe ser un `char *`, no `const char *`
 char	*ft_strjoin_free(char *s1, const char *s2, int to_free)
 {
 	char	*result;
@@ -60,8 +53,6 @@ char	*ft_strjoin_free(char *s1, const char *s2, int to_free)
 	return (result);
 }
 
-// Si no lo usas, evita warnings
-// Casting a (char *)
 void	print_msg(t_data *data, const char *msg, int fd)
 {
 	(void)data;

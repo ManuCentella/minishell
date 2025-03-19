@@ -3,47 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   export_builtin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:23 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 21:13:26 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/19 19:35:28 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* ************************************************************************** */
-/*      handle_export_value: Procesa la asignación de valor en export        */
-/* ************************************************************************** */
-// Separamos la variable del valor
-// Tomar solo el siguiente argumento válido
-// 🔥 Evita que se procese nuevamente como argumento
+static char	*get_export_value(t_export_content *context, char *equal)
+{
+	char	*value;
+	char	*next_val;
+
+	value = ft_strdup(equal + 1);
+	if (!value)
+		return (NULL);
+	if (*value == '\0' && context->cmd->args[context->index + 1])
+	{
+		free(value);
+		next_val = context->cmd->args[context->index + 1];
+		value = ft_strdup(next_val);
+		if (!value)
+			return (NULL);
+		free(next_val);
+		context->cmd->args[context->index + 1] = NULL;
+	}
+	return (value);
+}
+
 static int	handle_export_value(t_export_content *context, char *arg_copy,
 		char *equal)
 {
+	char	*name;
 	char	*value;
 	int		has_error;
 
-	has_error = 0;
 	*equal = '\0';
-	value = ft_strdup(equal + 1);
-	if (*value == '\0' && context->cmd->args[context->index + 1])
+	name = arg_copy;
+	value = get_export_value(context, equal);
+	if (!value)
 	{
-		value = ft_strdup(context->cmd->args[context->index + 1]);
-		context->cmd->args[context->index + 1] = NULL;
+		perror("strdup");
+		return (1);
 	}
-	if (!is_valid_var_name(arg_copy))
-		has_error = (print_msg(context->data,
-					"export: not a valid identifier", -1), 1);
+	has_error = 0;
+	if (!is_valid_var_name(name))
+	{
+		print_msg(context->data, "export: not a valid identifier", -1);
+		has_error = 1;
+	}
 	else
-		set_env_var(&(context->data->env), arg_copy, value);
+	{
+		set_env_var(&(context->data->env), name, value);
+	}
 	free(value);
 	return (has_error);
 }
 
-/* ************************************************************************** */
-/*  process_export_arg: Procesa cada argumento de export                     */
-/* ************************************************************************** */
 static int	process_export_arg(t_data *data, t_cmd *cmd, int index)
 {
 	char				*equal;
@@ -69,13 +87,6 @@ static int	process_export_arg(t_data *data, t_cmd *cmd, int index)
 	return (has_error);
 }
 
-/* ************************************************************************** */
-/*  export_builtin: Implementación del comando export                        */
-/* ************************************************************************** */
-// Si no hay argumentos, imprimimos variables de entorno
-// Recorremos los argumentos correctamente
-// Solo avanza si no hay error
-// Evitamos procesar el valor como si fuera otro argumento
 int	export_builtin(t_data *data, t_cmd *cmd)
 {
 	int	i;

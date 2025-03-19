@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-/* ************************************************************************** */
-/*        append_char: agrega un solo carácter a la cadena destino            */
-/* ************************************************************************** */
 void	append_char(char **expanded, char c, int *i)
 {
 	char	tmp[2];
@@ -25,10 +22,6 @@ void	append_char(char **expanded, char c, int *i)
 	(*i)++;
 }
 
-/* ************************************************************************** */
-/*    get_variable_value: busca el valor de una variable en el entorno        */
-/* ************************************************************************** */
-// ✅ Devuelve NULL si la variable no existe
 char	*get_variable_value(const char *var_name, t_env *env, int exit_status)
 {
 	t_env	*env_var;

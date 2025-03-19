@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 15:27:36 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/13 15:27:41 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/17 23:07:21 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ static void	setup_child_process(t_cmd *cmd_list, int prev_fd, int pipe_fd[2])
 		exit(EXIT_FAILURE);
 }
 
-static pid_t	create_exec_child(t_cmd *cmd, int prev_fd,
-	int pipe_fd[2], t_data *data)
+static pid_t	create_exec_child(t_cmd *cmd, int prev_fd, int pipe_fd[2],
+		t_data *data)
 {
 	pid_t	pid;
 

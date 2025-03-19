@@ -3,20 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:27:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/10 22:40:32 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:42:52 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * 🔹 set_env_var - Agrega o modifica una variable de entorno en `env`.
- */
-// Si ya existe, modificar su valor
-// Si no existe, la creamos y la añadimos a la lista
 void	update_existing_var(t_env *var, const char *value)
 {
 	char	*new_value;
@@ -59,10 +54,6 @@ void	set_env_var(t_env **env, const char *name, const char *value)
 	*env = new_var;
 }
 
-/**
- * 🔹 is_valid_var_name - Verifica si el nombre de una variable
- * de entorno es válido.
- */
 int	is_valid_var_name(const char *name)
 {
 	int	i;
@@ -79,9 +70,6 @@ int	is_valid_var_name(const char *name)
 	return (1);
 }
 
-/**
- * 🔹 print_env_vars - Imprime todas las variables de entorno exportadas.
- */
 void	print_env_vars(t_env *env)
 {
 	while (env)
@@ -99,10 +87,6 @@ void	print_env_vars(t_env *env)
 	}
 }
 
-/**
- * 🔹 free_env_list - Libera toda la lista de variables de entorno.
- * 🔹 Recorre la lista y libera cada nodo.
- */
 void	free_env_list(t_env *env)
 {
 	t_env	*tmp;

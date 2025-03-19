@@ -2,46 +2,47 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/10 22:29:17 by szaghdad          #+#    #+#             */
-/*   Updated: 2025/03/10 22:29:17 by szaghdad         ###   ########.fr       */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
+/*   Created: 2025/03/18 13:35:37 by mcentell          #+#    #+#             */
+/*   Updated: 2025/03/18 13:35:37 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
-extern int g_exit_status;
 
-void	disable_echoctl(void)
-{
-	// Esta función ya no es necesaria
-}
+extern int	g_exit_status;
 
-/**
- * 🛠️ free_cmd_list - Libera la memoria de la lista de comandos.
- */
-void	free_cmd_args(t_cmd *cmd)
+static void	free_args(char **args)
 {
 	int	i;
 
-	if (cmd->args)
-	{
-		i = 0;
-		while (cmd->args[i])
-		{
-			free(cmd->args[i]);
-			i++;
-		}
-		free(cmd->args);
-	}
+	i = 0;
+	while (args && args[i])
+		free(args[i++]);
+	free(args);
+}
+
+void	free_cmd_args(t_cmd *cmd)
+{
+	free_args(cmd->args);
+	cmd->args = NULL;
 	free(cmd->infile);
+	cmd->infile = NULL;
 	free(cmd->outfile);
+	cmd->outfile = NULL;
 	free(cmd->appendfile);
+	cmd->appendfile = NULL;
 	free(cmd->errfile);
+	cmd->errfile = NULL;
 	free(cmd->heredoc);
+	cmd->heredoc = NULL;
 	free(cmd->heredoc_content);
+	cmd->heredoc_content = NULL;
 }
 
 void	free_cmd_list(t_cmd *cmd)
@@ -52,39 +53,26 @@ void	free_cmd_list(t_cmd *cmd)
 	{
 		tmp = cmd->next;
 		free(cmd->cmd);
+		cmd->cmd = NULL;
 		free_cmd_args(cmd);
 		free(cmd);
 		cmd = tmp;
 	}
 }
 
-/**
- * 🛠️ signal_handler - Maneja `Ctrl+C` y `Ctrl+\`
- */
-// Ctrl+C
-// Nueva línea para evitar caracteres extra
-// Resetea readline()
-// Borra la línea actual
-// Redibuja el prompt sin imprimir ^C
-
 void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(STDOUT_FILENO, "\nminishell> ", 12);
+		rl_crlf();
 		rl_replace_line("", 0);
+		rl_on_new_line();
 		rl_redisplay();
 		g_exit_status = 130;
-	}
-	else if (sig == SIGQUIT)
-	{
-		printf("Quit (core dumped)\n");
-		g_exit_status = 131;  // SIGQUIT = 128 + 3
+		signal(SIGINT, signal_handler);
 	}
 }
 
-// ✅ Configurar señales
-// ✅ Desactivar impresión de `^C`
 void	process_input(t_data *data)
 {
 	char	*input;
@@ -104,10 +92,10 @@ void	process_input(t_data *data)
 			add_history(input);
 			tokens = tokenize_input(input);
 			cmd_list = parse_tokens(tokens, data->env, data->exit_status);
+			free_tokens(tokens);
 			executor(cmd_list, data);
 			free_cmd_list(cmd_list);
 		}
 		free(input);
 	}
 }
-

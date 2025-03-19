@@ -6,12 +6,14 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:32:26 by szaghdad          #+#    #+#             */
-/*   Updated: 2025/03/12 16:27:00 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/19 14:45:14 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-# define MINISHELL_H
+#define MINISHELL_H
+#define _POSIX_C_SOURCE 200809L
+
 
 # include "../libft/inc/libft.h"
 # include <fcntl.h>
@@ -26,6 +28,8 @@
 # include <stdbool.h>
 # include <signal.h>
 # include <termios.h>
+
+typedef struct sigaction	t_siga;
 
 // --- Definición de estructuras ---
 typedef struct s_redir
@@ -212,5 +216,20 @@ void	append_char(char **expanded, char c, int *i);
 char	*get_variable_value(const char *var_name, t_env *env, int exit_status);
 t_env	*init_env(char **envp);
 t_env	*get_env_var(t_env *env, const char *name);
+int	handle_cwd_fail(t_data *data);
+void	update_var(t_data *data);
+char	**handle_empty_path(char *cmd, char *path_var);
+char	*handle_absolute_or_relative_path(char *cmd);
+char	*get_path_variable(t_env *env);
+char	*search_paths(char **paths, char *cmd);
+char	*check_command_in_path(const char *base_path, const char *cmd);
+t_cmd	*init_cmd(void);
+void	handle_pipe_or_separator(t_cmd **current, char **tokens, int i);
+void	expand_cmd_list(t_cmd *cmd_list, t_env *env, int exit_status);
+void	add_command_or_argument(t_cmd *current, char *token);
+void	handle_redirection_tokens(t_cmd *current, char **tokens, int *i);
+void	free_tokens(char **tokens);
+
+
 
 #endif

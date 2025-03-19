@@ -6,27 +6,12 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 12:15:11 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/11 12:28:31 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/19 19:34:47 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/******************************************************************************
- * tokenizer_quotes.c
- * - Maneja comillas simples y dobles
- * - handle_escaped_chars para \ dentro de comillas dobles
- ******************************************************************************/
-
-/* (1) handle_escaped_chars: \" -> ", \\ -> \, \$ -> \x02 */
-// 🔹 Comillas dobles o barra invertida escapada
-// Salta el `\` y el carácter escapado
-// 🔹 Si es `\$`, guardamos `\` y `$` como texto
-// Copia la barra invertida
-// Copia el `$` normal, sin expansión
-// Salta el `\` y el `$`
-// Copia la barra invertida
-// Avanza una posición
 void	handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
 {
 	char	next;
@@ -50,70 +35,90 @@ void	handle_escaped_chars(t_tokenizer *t, char *buffer, int *j)
 	}
 }
 
-/* (3) handle_quotes: maneja comillas simples y dobles */
-// 🔹 Activamos modo comillas dobles
-// 🔹 Desactivamos modo comillas dobles
-void	process_quote_content(t_tokenizer *t, char quote, char *buffer, int *j)
+void	process_quote_content(t_tokenizer *t, char quote, char **buffer, int *j)
 {
 	while (t->i < t->len && t->input[t->i] != quote)
 	{
 		if (quote == '\"' && t->input[t->i] == '\\')
-			handle_escaped_chars(t, buffer, j);
+			handle_escaped_chars(t, *buffer, j);
 		else
-			buffer[(*j)++] = t->input[t->i++];
+			(*buffer)[(*j)++] = t->input[t->i++];
 	}
 	if (t->i >= t->len)
 	{
 		fprintf(stderr, "Error: comillas sin cerrar\n");
-		free(buffer);
-		buffer = NULL;
+		free(*buffer);
+		*buffer = NULL;
 	}
 	else
+	{
 		t->i++;
+	}
+}
+
+static char	*collect_quote_content(t_tokenizer *t, char quote, int *length)
+{
+	int		size;
+	char	*buf;
+
+	size = t->len - t->i + 1;
+	buf = malloc(size);
+	if (!buf)
+	{
+		t->i--;
+		return (NULL);
+	}
+	t->i++;
+	if (quote == '\"')
+		t->inside_double_quotes = 1;
+	process_quote_content(t, quote, &buf, length);
+	if (quote == '\"')
+		t->inside_double_quotes = 0;
+	buf[*length] = '\0';
+	return (buf);
 }
 
 void	handle_quotes(t_tokenizer *t, char quote)
 {
-	int		j;
-	int		size;
+	int		len;
 	char	*buffer;
+	char	*wrapped;
 
-	j = 0;
-	size = t->len - t->i + 1;
-	buffer = malloc(size);
-	t->i++;
+	len = 0;
+	buffer = collect_quote_content(t, quote, &len);
 	if (!buffer)
 		return ;
-	if (quote == '\"')
-		t->inside_double_quotes = 1;
-	process_quote_content(t, quote, buffer, &j);
-	if (!buffer)
-		return ;
-	buffer[j] = '\0';
 	if (quote == '\'')
-		add_token(t, ft_strjoin("\x01", buffer), j + 1);
+	{
+		wrapped = ft_strjoin("\x01", buffer);
+		if (wrapped)
+		{
+			add_token(t, wrapped, len + 1);
+			free(wrapped);
+		}
+	}
 	else
-		add_token(t, buffer, j);
-	if (quote == '\"')
-		t->inside_double_quotes = 0;
+		add_token(t, buffer, len);
 	free(buffer);
 }
 
 void	add_token(t_tokenizer *t, char *start, int length)
 {
 	char	**new_tokens;
+	char	*dup_str;
 
 	new_tokens = allocate_new_tokens(t);
 	if (!new_tokens)
 		return ;
 	copy_existing_tokens(new_tokens, t->tokens, t->token_count);
-	new_tokens[t->token_count] = strndup(start, length);
-	if (!new_tokens[t->token_count])
+	dup_str = strndup(start, length);
+	if (!dup_str)
 	{
 		perror("strndup");
 		free(new_tokens);
 		return ;
 	}
+	new_tokens[t->token_count] = dup_str;
 	new_tokens[t->token_count + 1] = NULL;
 	free(t->tokens);
 	t->tokens = new_tokens;
