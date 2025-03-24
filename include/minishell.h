@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:32:26 by szaghdad          #+#    #+#             */
-/*   Updated: 2025/03/24 19:03:06 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:39:03 by szaghdad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,8 @@ void						disable_echoctl(void);
 void						signal_handler(int sig);
 void						process_input(t_data *data);
 
-/* ---------- 12. MANEJO DE DIRECTORIO Y ACTUALIZACIÓN DE VARIABLES ---------- */
+/* ---------- 12. MANEJO DE DIRECTORIO Y
+ACTUALIZACIÓN DE VARIABLES ---------- */
 int							handle_cwd_fail(t_data *data);
 void						update_var(t_data *data);
 
