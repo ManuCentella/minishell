@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:29 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/17 22:51:04 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/20 16:07:04 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	expand_question_mark(char **expanded, int *i, int exit_status)
 	char	*value;
 
 	(void)exit_status;
-	printf("DEBUG: Expandiendo $? con g_exit_status = %d\n", g_exit_status);
 	value = get_variable_value("?", NULL, g_exit_status);
 	if (!value)
 		return ;

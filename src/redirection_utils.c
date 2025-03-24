@@ -30,6 +30,7 @@ int	handle_all_heredocs(t_cmd *cmd_list)
 		{
 			if (handle_heredoc(tmp) == -1)
 				return (-1);
+			free(tmp->heredoc);
 			tmp->heredoc = NULL;
 		}
 		tmp = tmp->next;

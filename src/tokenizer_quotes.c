@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 12:15:11 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/19 19:34:47 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:44:42 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	process_quote_content(t_tokenizer *t, char quote, char **buffer, int *j)
 	}
 	if (t->i >= t->len)
 	{
-		fprintf(stderr, "Error: comillas sin cerrar\n");
+		ft_putendl_fd("Error: unclosed quotes", 2);
 		free(*buffer);
 		*buffer = NULL;
 	}
@@ -111,10 +111,10 @@ void	add_token(t_tokenizer *t, char *start, int length)
 	if (!new_tokens)
 		return ;
 	copy_existing_tokens(new_tokens, t->tokens, t->token_count);
-	dup_str = strndup(start, length);
+	dup_str = ft_strndup(start, length);
 	if (!dup_str)
 	{
-		perror("strndup");
+		perror("ft_strndup");
 		free(new_tokens);
 		return ;
 	}

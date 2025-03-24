@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:17:18 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/17 22:18:34 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:21:14 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static void	external_fork(t_cmd *cmd, t_data *data, char *binary_path,
 	{
 		wait_for_child(pid, data);
 		if (g_exit_status == 130)
-			rl_crlf();
+			write(STDOUT_FILENO, "\n", 1);
 		set_sigint_handler(signal_handler);
 	}
 }

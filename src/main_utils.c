@@ -2,14 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+
-	+:+     */
-/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+
-	+#+        */
-/*                                                +#+#+#+#+#+
-	+#+           */
-/*   Created: 2025/03/18 13:35:37 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/18 13:35:37 by mcentell         ###   ########.fr       */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 19:07:25 by mcentell          #+#    #+#             */
+/*   Updated: 2025/03/24 19:07:25 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +61,7 @@ void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		rl_crlf();
+		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();

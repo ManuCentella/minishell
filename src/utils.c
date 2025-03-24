@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:25:07 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/17 22:26:18 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:46:56 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,22 @@ void	print_msg(t_data *data, const char *msg, int fd)
 
 char	*ft_strndup(const char *s, size_t n)
 {
+	size_t	len;
 	char	*dup;
 	size_t	i;
 
-	dup = malloc(n + 1);
+	len = 0;
+	while (s[len] && len < n)
+		len++;
+	dup = malloc(len + 1);
 	if (!dup)
 		return (NULL);
 	i = 0;
-	while (s[i] && i < n)
+	while (i < len)
 	{
 		dup[i] = s[i];
 		i++;
 	}
-	dup[i] = '\0';
+	dup[len] = '\0';
 	return (dup);
 }

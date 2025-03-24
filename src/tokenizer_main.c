@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:15:28 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/19 11:26:43 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:41:07 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	**tokenize_input(char *input)
 
 	t.input = input;
 	t.i = 0;
-	t.len = (int)strlen(input);
+	t.len = (int)ft_strlen(input);
 	t.tokens = NULL;
 	t.token_count = 0;
 	t.inside_double_quotes = 0;

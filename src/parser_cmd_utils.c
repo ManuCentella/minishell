@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 23:06:03 by mcentell          #+#    #+#             */
-/*   Updated: 2025/03/19 19:19:38 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:31:44 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static char	**expand_args(char **old_args, char *token)
 		new_args[i] = old_args[i];
 		i++;
 	}
-	new_args[i] = strdup(token);
+	new_args[i] = ft_strdup(token);
 	if (!new_args[i])
 	{
 		free(new_args);
@@ -82,7 +82,7 @@ void	add_command_or_argument(t_cmd *current, char *token)
 {
 	if (!current->cmd)
 	{
-		current->cmd = strdup(token);
+		current->cmd = ft_strdup(token);
 		if (!current->cmd)
 		{
 			perror("strdup");

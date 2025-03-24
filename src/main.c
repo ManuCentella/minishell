@@ -6,7 +6,7 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:08:21 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/19 11:25:10 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:16:00 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ int	main(int argc, char **argv, char **envp)
 	process_input(&data);
 	free(data.cwd);
 	free_env_list(data.env);
-	clear_history();
+	rl_clear_history();
 	return (0);
 }

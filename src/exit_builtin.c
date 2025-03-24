@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: szaghdad <szaghdad@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:39 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/09 12:29:57 by szaghdad         ###   ########.fr       */
+/*   Updated: 2025/03/24 16:28:59 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	exit_builtin(t_cmd *cmd)
 			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 			return ;
 		}
-		exit_code = atol(cmd->args[1]) % 256;
+		exit_code = ft_atoi(cmd->args[1]) % 256;
 	}
 	exit(exit_code);
 }
