@@ -6,13 +6,13 @@
 /*   By: mcentell <mcentell@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 12:16:34 by  mcentell         #+#    #+#             */
-/*   Updated: 2025/03/24 19:06:08 by mcentell         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:29:04 by mcentell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	process_expansion(const char *arg, char **expanded,
+static void	process_expansion(char *arg, char **expanded,
 		t_expansion_context *context)
 {
 	int	i;
